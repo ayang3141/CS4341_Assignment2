@@ -1,5 +1,11 @@
-# CS4341_Assignment2
+CS4341_Assignment2
+Adam Yang, Jack Gomes, Christopher Lobo
+CS 4341 Assignment 2
+Professor Joseph Beck
+February 14, 2022
 
-# Adam Yang, Jack Gomes, Christopher Lobo
-# CS 4341 Assignment 2
-# Professor Joseph Beck
+
+
+
+
+
