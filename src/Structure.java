@@ -16,6 +16,7 @@ public class Structure {
         this.theBins.add(ignBin);
     }
 
+
     public double getScore() {
         double score = 0;
         for(int i = 0; i < theBins.size(); i++) {
