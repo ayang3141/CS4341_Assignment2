@@ -1,5 +1,5 @@
 import java.util.*;
-
+import javafx.util.Pair;
 
 public class NumberBin {
     // This class is responsible for handling the Number Bin class
@@ -10,10 +10,11 @@ public class NumberBin {
 
     List<Double> numberBin = new ArrayList<Double>();
     String binType;
-
+    Pair<Integer, Double> test;
 
     public NumberBin(String binType) {
         this.binType = binType;
+        this.test = new Pair<>(1, -6.3);
     }
 
     // method for calculating the score of a given bin
@@ -23,13 +24,10 @@ public class NumberBin {
             case PRODUCT:    // If it's the product bin
                 return getProduct();
             case SUM:    // If it's the sum bin
-
                 return getSum();
             case RANGE:   // If it's the range bin
-
                 return getRange();
             case UNUSED:    // If it's the unused bin
-
                 return 0;
         }
 

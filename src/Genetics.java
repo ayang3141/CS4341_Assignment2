@@ -1,5 +1,4 @@
 import java.util.List;
-import java.lang.Math;
 import java.util.Random;
 import java.util.*;
 
@@ -62,7 +61,6 @@ public class Genetics {
 
 
     public Structure[] numberCrossOver(Structure parent1, Structure parent2, int numSplits) {
-        ArrayList<>
 
         return null;
     }
