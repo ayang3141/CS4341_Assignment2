@@ -1,19 +1,54 @@
 public class Genetics {
 
-    public Genetics() {
+    int problemNumber;
 
+    public Genetics(int problemNunber) {
+        this.problemNumber = problemNunber;
     }
 
-/*
-genetic representation:
-4:      1 0 0
-2.5:
 
 
+    public Structure[] numberSelection() {
 
- */
 
-    public static void main(String args[]) {
-        System.out.println("Hello World");
+        return null;
     }
+
+    public Structure[] numberCrossOver(Structure parent1, Structure parent2, int numSplits) {
+
+
+        return null;
+    }
+
+    public Structure[] numberMutation(Structure parent1, Structure parent2) {
+
+
+        return null;
+    }
+
+
+
+    public Tower[] towerSelection() {
+
+
+        return null;
+    }
+
+    public Tower[] towerCrossOver(Tower parent1, Tower parent2, int numSplits) {
+
+
+        return null;
+    }
+
+    public Tower[] towerMutation(Tower parent1, Tower parent2) {
+
+
+        return null;
+    }
+
+
+
+
+
+
 }
