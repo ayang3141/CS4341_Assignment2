@@ -32,37 +32,37 @@ public class TowerBin {
                 return isValidTop();
             case UNUSED:    // If it's the unused bin
 
-                return isValidUnused();
+                return true;
         }
 
 
 
-        return false;
+        return true;
     }
 
     // check if bottom section is valid
-    public boolean isValidBottom() {
+    private boolean isValidBottom() {
 
 
         return false;
     }
 
     // check if middle section is valid
-    public boolean isValidMiddle() {
+    private boolean isValidMiddle() {
 
 
         return false;
     }
 
     // check if top section is valid
-    public boolean isValidTop() {
+    private boolean isValidTop() {
 
 
         return false;
     }
 
     // check if unused section is valid
-    public boolean isValidUnused() {
+    private boolean isValidUnused() {
 
 
         return false;

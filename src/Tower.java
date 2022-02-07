@@ -38,13 +38,13 @@ public class Tower {
     }
 
     // method for getting the most up-to-date height
-    public int getHeight() {
+    private int getHeight() {
         // calculate up-to-date height
         return 0;
     }
 
     // method for getting the most up-to-date cost
-    public int getCost() {
+    private int getCost() {
         // calculate up-to-date cost
         return 0;
     }
