@@ -6,6 +6,7 @@ public class NumberGroup {
     double[] numberGroup = new double[40];
 
     double score = 0;
+    int size = 40;
 
     int productBinStart = 0;
     int productBinEnd = 10;
@@ -23,6 +24,10 @@ public class NumberGroup {
 
     public NumberGroup() {
 
+    }
+
+    public NumberGroup(double[] numbers) {
+        this.numberGroup = numbers;
     }
 
 

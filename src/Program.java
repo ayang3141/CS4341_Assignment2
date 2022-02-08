@@ -36,13 +36,13 @@ public class Program {
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Selection
-                geneticAlgo.numberSelection()
+                geneticAlgo.numberSelection();
 
                 // Crossover
-
+                geneticAlgo.numberCrossOver();
 
                 // Mutation
-
+                geneticAlgo.numberMutation();
 
                 // Compute fitness
 

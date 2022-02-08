@@ -60,7 +60,7 @@ public class Genetics {
     }
 
     // Number Problem cross-over method
-    public NumberGroup[] numberCrossOver(NumberGroup parent1, NumberGroup parent2, int numSplits, HashMap<Integer, Double> NumberID) {
+    public NumberGroup numberCrossOver(NumberGroup parent1, NumberGroup parent2, HashMap<Integer, Double> NumberID) {
         double[] firstParent = parent1.numberGroup;
         double[] secondParent = parent2.numberGroup;
         int size = firstParent.length;
@@ -85,6 +85,7 @@ public class Genetics {
         }
         System.out.println(Arrays.toString(child));
 
+        // Ordered Crossover
         int currentIndex = secondSlice;
         for(int i = 0; i < size; i++) {
             double currentDouble = secondParent[(secondSlice + i) % size];
@@ -96,25 +97,26 @@ public class Genetics {
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-        return null;
+        return new NumberGroup(child);
     }
 
 
     // Number Problem mutation method
-    public NumberGroup[] numberMutation(NumberGroup child, HashMap<Integer, Double> NumberID) {
+    public NumberGroup numberMutation(NumberGroup child, HashMap<Integer, Double> NumberID) {
+        double[] genes = child.numberGroup;
+        int size = child.size;
+        double mutationProb = 10;
+        Random random = new Random();
+        for(int i = 0; i < size; i++) {
+            if(random.nextInt(100) < mutationProb) {
+                int swapIndex = random.nextInt(size);
+                double currentValue = genes[i];
+                genes[i] = genes[swapIndex];
+                genes[swapIndex] = currentValue;
+            }
+        }
 
-
-        return null;
+        return new NumberGroup(genes);
     }
 
 
