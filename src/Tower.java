@@ -2,6 +2,7 @@ import java.lang.Math;
 
 public class Tower {
 
+
     TowerBin bottom;
     TowerBin middle;
     TowerBin top;
