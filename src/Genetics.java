@@ -12,7 +12,7 @@ public class Genetics {
 
 
     // Number Problem selection method
-    public NumberGroup[] numberSelection(List<NumberGroup> GenePool, HashMap<Integer, Double> NumberID) {
+    public NumberGroup[] numberSelection(List<NumberGroup> GenePool) {
         ArrayList<Double> fitnessScores = new ArrayList<Double>();
 
         // put fitness scores in fitness scores list
@@ -60,7 +60,7 @@ public class Genetics {
     }
 
     // Number Problem cross-over method
-    public NumberGroup numberCrossOver(NumberGroup parent1, NumberGroup parent2, HashMap<Integer, Double> NumberID) {
+    public NumberGroup numberCrossOver(NumberGroup parent1, NumberGroup parent2) {
         double[] firstParent = parent1.numberGroup;
         double[] secondParent = parent2.numberGroup;
         int size = firstParent.length;
@@ -100,9 +100,8 @@ public class Genetics {
         return new NumberGroup(child);
     }
 
-
     // Number Problem mutation method
-    public NumberGroup numberMutation(NumberGroup child, HashMap<Integer, Double> NumberID) {
+    public NumberGroup numberMutation(NumberGroup child) {
         double[] genes = child.numberGroup;
         int size = child.size;
         double mutationProb = 10;
@@ -121,21 +120,21 @@ public class Genetics {
 
 
     // Tower Problem selection method
-    public Tower[] towerSelection(HashMap<Integer, TowerPiece> TowerID) {
+    public Tower[] towerSelection() {
 
 
         return null;
     }
 
     // Tower Problem cross-over method
-    public Tower[] towerCrossOver(Tower parent1, Tower parent2, int numSplits, HashMap<Integer, TowerPiece> TowerID) {
+    public Tower[] towerCrossOver(Tower parent1, Tower parent2) {
 
 
         return null;
     }
 
     // Tower Problem mutation method
-    public Tower[] towerMutation(Tower parent1, Tower parent2, HashMap<Integer, TowerPiece> TowerID) {
+    public Tower[] towerMutation(Tower child) {
 
 
         return null;

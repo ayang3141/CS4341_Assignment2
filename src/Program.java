@@ -15,9 +15,8 @@ public class Program {
         List<TowerPiece> TowerGenePool = new ArrayList<TowerPiece>();
 
 
-
-
         // read file to determine start values
+
 
 
         // generate the initial population
@@ -64,13 +63,13 @@ public class Program {
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Selection
-
+                geneticAlgo.towerSelection();
 
                 // Crossover
-
+                geneticAlgo.towerCrossOver();
 
                 // Mutation
-
+                geneticAlgo.towerMutation();
 
                 // Compute fitness
 
@@ -80,5 +79,51 @@ public class Program {
 
         }
     }
+
+//    public ArrayList<Object> getPopulation() {
+//        //File I/O
+//        File levelFile = new File(this.fileName);
+//
+//        //count total chars
+//        BufferedReader colScanner = new BufferedReader(new FileReader(levelFile));
+//        String line = null;
+//        while((line = colScanner.readLine()) != null)
+//        {
+//            System.out.println(line);
+//            //tokenize it here
+//            String[] tokens = line.split("\t");
+//            numCols = tokens.length;
+//            numRows++;
+//        }
+//
+//        System.out.println(numCols);
+//        System.out.println(numRows);
+//
+//        Scanner sc = new Scanner(levelFile);
+//        sc.useDelimiter("(\\r\\n)|\\t");
+//        char[][] level = new char[numRows][numCols];
+//
+//
+//
+//        //now, actually put them in a list. would be better to do this all in one loop, but this works.
+//        for (int i = 0; i < numRows; i++)
+//        {
+//            for (int j = 0; j < numCols; j++)
+//            {
+//                if(sc.hasNext())
+//                {
+//                    char ch = sc.next().charAt(0); // Convert to char
+//                    level[i][j] = ch;
+//                    //System.out.println(ch);
+//                    //System.out.println(level[i][j]);
+//                }
+//            }
+//        }
+//        this.gameboard = level;
+//        sc.close();
+//    }
+
+
+
 
 }
