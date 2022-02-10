@@ -6,7 +6,7 @@ import java.util.*;
 public class NumberGroup {
 
     int[] numberIDGroup = new int[40];
-    HashMap<Integer, Double> numberID_Map;
+    HashMap<Integer, Double> numberIDHashMap;
 
     double score = 0;
     int size = 40;
@@ -34,9 +34,8 @@ public class NumberGroup {
     }
 
 
-    public double getScore() {
+    public void calculateScore() {
         this.score = getProduct() + getSum() + getRange();
-        return this.score;
     }
 
 
@@ -44,7 +43,7 @@ public class NumberGroup {
         double max = Double.NEGATIVE_INFINITY;
         double min = Double.POSITIVE_INFINITY;
         for(int i = rangeBinStart; i < rangeBinEnd; i++) {
-            double currentValue = numberID_Map.get(this.numberIDGroup[i]);
+            double currentValue = numberIDHashMap.get(this.numberIDGroup[i]);
             if(currentValue > max) {
                 max = currentValue;
             }
@@ -58,7 +57,7 @@ public class NumberGroup {
     private double getSum() {
         double sum = 0.0;
         for(int i = sumBinStart; i < sumBinEnd; i++) {
-            sum += numberID_Map.get(this.numberIDGroup[i]);
+            sum += numberIDHashMap.get(this.numberIDGroup[i]);
         }
         return sum;
     }
@@ -66,7 +65,7 @@ public class NumberGroup {
     private double getProduct() {
         double product = 1.0;
         for(int i = productBinStart; i < productBinEnd; i++) {
-            product *= numberID_Map.get(this.numberIDGroup[i]);
+            product *= numberIDHashMap.get(this.numberIDGroup[i]);
         }
         return product;
     }

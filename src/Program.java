@@ -72,7 +72,7 @@ public class Program {
 
             // Compute fitness score for each individual in population
             for(int i = 0; i < thePopulation.size(); i++) {
-                thePopulation.get(i).getScore();
+                thePopulation.get(i).calculateScore();
             }
 
 
@@ -93,11 +93,15 @@ public class Program {
                     geneticAlgo.numberMutation(newChildren[0]);
                     geneticAlgo.numberMutation(newChildren[1]);
 
+                    // add new children to population
+                    thePopulation.add(newChildren[0]);
+                    thePopulation.add(newChildren[1]);
+
                 }
 
-                // Compute fitness for each individual in population
+                // Compute fitness for each individual in new population
                 for(int i = 0; i < thePopulation.size(); i++) {
-                    thePopulation.get(i).getScore();
+                    thePopulation.get(i).calculateScore();
                 }
 
                 // Only keep the TOP 10 individuals of the population
@@ -137,14 +141,25 @@ public class Program {
             }
 
 
-
-
+            List<Tower> thePopulation = new ArrayList<Tower>(15);
+            thePopulation.add(new Tower(initialIndividualID));
 
             // generate the initial population
+            while(thePopulation.size() < 10) {
+                // generate a new clone of the initial individual
+                int[] newIndividual = initialIndividualID.clone();
 
+                // randomly shuffle the new clone
+                shuffle(newIndividual);
+
+                // add the randomly shuffled individual to the population
+                thePopulation.add(new Tower(newIndividual));
+            }
 
             // Compute fitness score for each individual in population
-
+            for(int i = 0; i < thePopulation.size(); i++) {
+                thePopulation.get(i).calculateScore();
+            }
 
 
             boolean POPULATION_NOT_CONVERGED = true;
@@ -153,18 +168,38 @@ public class Program {
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Select the top 2 individuals to be parents
-//                geneticAlgo.towerSelection(); //TODO: implement this
+                // Select the top 2 individuals to be parents
+                NumberGroup[] topTwo = geneticAlgo.towerSelection(thePopulation);
 
-                // Cross-Over: generate new children until the population is at least 10
-//                geneticAlgo.towerCrossOver(); //TODO: implement this
+                // generate new children until the population is at least 10
+                while(thePopulation.size() >= 10) {
+                    // Cross-Over: generate 2 new children
+                    Tower[] newChildren = geneticAlgo.towerCrossOver(topTwo[0], topTwo[1]);
 
-                // The new children undergo mutation
-//                geneticAlgo.towerMutation(); //TODO: implement this
+                    // The new children undergo mutation
+                    geneticAlgo.towerMutation(newChildren[0]);
+                    geneticAlgo.towerMutation(newChildren[1]);
+
+                    // add new children to population
+                    thePopulation.add(newChildren[0]);
+                    thePopulation.add(newChildren[1]);
+
+                }
+
+                // Compute fitness for each individual in new population
+                for(int i = 0; i < thePopulation.size(); i++) {
+                    thePopulation.get(i).calculateScore();
+                }
+
 
                 // Only keep the TOP 10 individuals of the population
+                Collections.sort(thePopulation, NumberGroup.fitScoreComparator);
+                List<Tower> newPopulation = new ArrayList<Tower>(15);
+                for(int i = 0; i < 10; i++) {
+                    newPopulation.add(thePopulation.get(i));
+                }
+                thePopulation = newPopulation;
 
-
-                // Compute fitness for each individual in population
 
             }
 
