@@ -1,4 +1,5 @@
 import java.lang.Math;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class Tower {
@@ -28,7 +29,7 @@ public class Tower {
     }
 
     // method for calculating score
-    public int getScore() {
+    public int calculateScore() {
         this.height = getHeight();
         this.cost = getCost();
 
@@ -87,11 +88,14 @@ public class Tower {
         return false;
     }
 
+    public static Comparator<Tower> fitScoreComparator = new Comparator<Tower>() {
 
+        public int compare(Tower T1, Tower T2) {
+            double score1 = T1.score;
+            double score2 = T2.score;
 
-
-
-
-
-
+            /*For descending order*/
+            return Double.compare(score2, score1);
+        }
+    };
 }

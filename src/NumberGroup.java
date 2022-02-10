@@ -81,5 +81,6 @@ public class NumberGroup {
 
             /*For descending order*/
             return Double.compare(score2, score1);
-        }};
+        }
+    };
 }

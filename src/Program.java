@@ -140,6 +140,11 @@ public class Program {
                 e.printStackTrace();
             }
 
+            int[] initialIndividualID = new int[initialIndividualIDs.size()];
+            for(int i = 0; i < initialIndividualIDs.size(); i++){
+                initialIndividualID[i] = initialIndividualIDs.get(i);
+            }
+
 
             List<Tower> thePopulation = new ArrayList<Tower>(15);
             thePopulation.add(new Tower(initialIndividualID));
@@ -169,7 +174,7 @@ public class Program {
 
                 // Select the top 2 individuals to be parents
                 // Select the top 2 individuals to be parents
-                NumberGroup[] topTwo = geneticAlgo.towerSelection(thePopulation);
+                Tower[] topTwo = geneticAlgo.towerSelection(thePopulation);
 
                 // generate new children until the population is at least 10
                 while(thePopulation.size() >= 10) {
@@ -193,14 +198,12 @@ public class Program {
 
 
                 // Only keep the TOP 10 individuals of the population
-                Collections.sort(thePopulation, NumberGroup.fitScoreComparator);
+                Collections.sort(thePopulation, Tower.fitScoreComparator);
                 List<Tower> newPopulation = new ArrayList<Tower>(15);
                 for(int i = 0; i < 10; i++) {
                     newPopulation.add(thePopulation.get(i));
                 }
                 thePopulation = newPopulation;
-
-
             }
 
         }
