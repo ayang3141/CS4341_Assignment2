@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.*;
@@ -5,38 +7,60 @@ import java.util.*;
 public class Program {
 
 
-
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         // Initialize useful variables
         Genetics geneticAlgo = new Genetics();
-        HashMap<Integer, Double> numberID = new HashMap<Integer, Double>();
-        HashMap<Integer, TowerPiece> towerPieceID = new HashMap<Integer, TowerPiece>();
+
+        // handle args
+        boolean PROBLEM_1 = Integer.parseInt(args[0]) == 1;
+        boolean PROBLEM_2 = !PROBLEM_1;
+        String inputFilePath = args[1];
+        int maxRunTime = Integer.parseInt(args[2]);
+        final int prob1InputSize = 40;
 
 
-        // read file to determine start values
-        // initial population will be in list
-        double[] initialIndividual = new double[];
-        int[] initialIndividualID = new int[]; // array that the algorithm will be manipulating
+        if(PROBLEM_1) {
+            // DO NUMBER GENETIC ALGORITHM
+            // initial population will be in list
+            HashMap<Integer, Double> numberID = new HashMap<Integer, Double>();
 
-        // associate individuals with a unique ID
-        int ID = 1;
-        for(int i = 0; i < initialIndividual.length; i++) {
-            numberID.put(ID, initialIndividual[i]);
-            initialIndividualID[i] = ID;
-        }
+            int[] initialIndividualIDs = new int[prob1InputSize]; // array that the algorithm will be manipulating
+
+            // read file to determine start values
+            try {
+                File reader = new File(inputFilePath);
+                Scanner sc = new Scanner(reader);
+                int id = 1; //numberID
+                while (sc.hasNextLine()) {
+                    String data = sc.nextLine();
+                    double val = Double.parseDouble(data.trim());
+                    numberID.put(id, val); //add to (id, val) map
+                    initialIndividualIDs[id] = id;
+                    id++;
+                }
+                sc.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred reading the input");
+                e.printStackTrace();
+            }
+
+//            // associate individuals with a unique ID
+//            for(int i = 0; i < initialIndividuals.size(); i++) {
+//                numberID.put(i, initialIndividuals.get(i));
+//                initialIndividualIDs[i] = i;
+//            }
 
 
 
 
 
-        if(PROBLEM_1) { // DO NUMBER GENETIC ALGORITHM
             List<NumberGroup> thePopulation = new ArrayList<NumberGroup>(15);
-            thePopulation.add(new NumberGroup(initialIndividualID));
+            thePopulation.add(new NumberGroup(initialIndividualIDs));
 
             // generate the initial population
             while(thePopulation.size() < 10) {
                 // generate a new clone of the initial individual
-                int[] newIndividual = initialIndividualID.clone();
+                int[] newIndividual = initialIndividualIDs.clone();
 
                 // randomly shuffle the new clone
                 shuffle(newIndividual);
@@ -52,6 +76,9 @@ public class Program {
             }
 
 
+            boolean POPULATION_NOT_CONVERGED = true;
+            boolean TIME_RUN_OUT = true;
+            long startTime = System.nanoTime();
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Select the top 2 individuals to be parents
@@ -86,6 +113,31 @@ public class Program {
 
         }
         else if (PROBLEM_2) { // DO TOWER GENETIC ALGORITHM
+            HashMap<Integer, TowerPiece> towerPieceID = new HashMap<>();
+
+            ArrayList<Integer> initialIndividualIDs = new ArrayList<>();
+
+            // read file to determine start values
+            try {
+                File reader = new File(inputFilePath);
+                Scanner sc = new Scanner(reader);
+                int id = 1; //towerPieceID
+                while (sc.hasNextLine()) {
+                    String[] data = sc.nextLine().trim().split(", ");
+                    TowerPiece tp = new TowerPiece(data[0], Integer.parseInt(data[1]),
+                            Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                    towerPieceID.put(id, tp); //add to (id, val) map
+                    initialIndividualIDs.add(id);
+                    id++;
+                }
+                sc.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred reading the input");
+                e.printStackTrace();
+            }
+
+
+
 
 
             // generate the initial population
@@ -94,16 +146,20 @@ public class Program {
             // Compute fitness score for each individual in population
 
 
+
+            boolean POPULATION_NOT_CONVERGED = true;
+            boolean TIME_RUN_OUT = true;
+            long startTime = System.nanoTime();
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Select the top 2 individuals to be parents
-                geneticAlgo.towerSelection();
+//                geneticAlgo.towerSelection(); //TODO: implement this
 
                 // Cross-Over: generate new children until the population is at least 10
-                geneticAlgo.towerCrossOver();
+//                geneticAlgo.towerCrossOver(); //TODO: implement this
 
                 // The new children undergo mutation
-                geneticAlgo.towerMutation();
+//                geneticAlgo.towerMutation(); //TODO: implement this
 
                 // Only keep the TOP 10 individuals of the population
 
