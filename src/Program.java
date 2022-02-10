@@ -12,24 +12,25 @@ public class Program {
         HashMap<Integer, Double> numberID = new HashMap<Integer, Double>();
         HashMap<Integer, TowerPiece> towerPieceID = new HashMap<Integer, TowerPiece>();
 
-
-        // read file to determine start values
+        // TODO: read file to determine start values
         // initial population will be in list
-        double[] initialIndividual = new double[];
-        int[] initialIndividualID = new int[]; // array that the algorithm will be manipulating
 
-        // associate individuals with a unique ID
-        int ID = 1;
-        for(int i = 0; i < initialIndividual.length; i++) {
-            numberID.put(ID, initialIndividual[i]);
-            initialIndividualID[i] = ID;
-        }
 
 
 
 
 
         if(PROBLEM_1) { // DO NUMBER GENETIC ALGORITHM
+            // initial population will be in list
+            double[] initialIndividual = new double[];
+            int[] initialIndividualID = new int[]; // array that the algorithm will be manipulating
+
+            // associate individuals with a unique ID
+            int ID = 1;
+            for(int i = 0; i < initialIndividual.length; i++) {
+                numberID.put(ID, initialIndividual[i]);
+                initialIndividualID[i] = ID;
+            }
             List<NumberGroup> thePopulation = new ArrayList<NumberGroup>(15);
             thePopulation.add(new NumberGroup(initialIndividualID));
 
@@ -48,7 +49,7 @@ public class Program {
 
             // Compute fitness score for each individual in population
             for(int i = 0; i < thePopulation.size(); i++) {
-                thePopulation.get(i).getScore();
+                thePopulation.get(i).calculateScore();
             }
 
 
@@ -66,11 +67,15 @@ public class Program {
                     geneticAlgo.numberMutation(newChildren[0]);
                     geneticAlgo.numberMutation(newChildren[1]);
 
+                    // add new children to population
+                    thePopulation.add(newChildren[0]);
+                    thePopulation.add(newChildren[1]);
+
                 }
 
-                // Compute fitness for each individual in population
+                // Compute fitness for each individual in new population
                 for(int i = 0; i < thePopulation.size(); i++) {
-                    thePopulation.get(i).getScore();
+                    thePopulation.get(i).calculateScore();
                 }
 
                 // Only keep the TOP 10 individuals of the population
@@ -86,29 +91,71 @@ public class Program {
 
         }
         else if (PROBLEM_2) { // DO TOWER GENETIC ALGORITHM
+            // initial population will be in list
+            TowerPiece[] initialIndividual = new TowerPiece[];
+            int[] initialIndividualID = new int[]; // array that the algorithm will be manipulating
 
+            // associate individuals with a unique ID
+            int ID = 1;
+            for(int i = 0; i < initialIndividual.length; i++) {
+                towerPieceID.put(ID, initialIndividual[i]);
+                initialIndividualID[i] = ID;
+            }
+            List<Tower> thePopulation = new ArrayList<Tower>(15);
+            thePopulation.add(new Tower(initialIndividualID));
 
             // generate the initial population
+            while(thePopulation.size() < 10) {
+                // generate a new clone of the initial individual
+                int[] newIndividual = initialIndividualID.clone();
 
+                // randomly shuffle the new clone
+                shuffle(newIndividual);
+
+                // add the randomly shuffled individual to the population
+                thePopulation.add(new Tower(newIndividual));
+            }
 
             // Compute fitness score for each individual in population
-
+            for(int i = 0; i < thePopulation.size(); i++) {
+                thePopulation.get(i).calculateScore();
+            }
 
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Select the top 2 individuals to be parents
-                geneticAlgo.towerSelection();
+                // Select the top 2 individuals to be parents
+                NumberGroup[] topTwo = geneticAlgo.towerSelection(thePopulation);
 
-                // Cross-Over: generate new children until the population is at least 10
-                geneticAlgo.towerCrossOver();
+                // generate new children until the population is at least 10
+                while(thePopulation.size() >= 10) {
+                    // Cross-Over: generate 2 new children
+                    Tower[] newChildren = geneticAlgo.towerCrossOver(topTwo[0], topTwo[1]);
 
-                // The new children undergo mutation
-                geneticAlgo.towerMutation();
+                    // The new children undergo mutation
+                    geneticAlgo.towerMutation(newChildren[0]);
+                    geneticAlgo.towerMutation(newChildren[1]);
+
+                    // add new children to population
+                    thePopulation.add(newChildren[0]);
+                    thePopulation.add(newChildren[1]);
+
+                }
+
+                // Compute fitness for each individual in new population
+                for(int i = 0; i < thePopulation.size(); i++) {
+                    thePopulation.get(i).calculateScore();
+                }
+
 
                 // Only keep the TOP 10 individuals of the population
+                Collections.sort(thePopulation, NumberGroup.fitScoreComparator);
+                List<Tower> newPopulation = new ArrayList<Tower>(15);
+                for(int i = 0; i < 10; i++) {
+                    newPopulation.add(thePopulation.get(i));
+                }
+                thePopulation = newPopulation;
 
-
-                // Compute fitness for each individual in population
 
             }
 

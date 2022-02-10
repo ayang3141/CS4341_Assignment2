@@ -129,20 +129,45 @@ public class Genetics {
 
 
     // Tower Problem selection method
-    public Tower[] towerSelection(List<NumberGroup> GenePool) {
+    public Tower[] towerSelection(List<Tower> population) {
+        // put all fitness scores into a list
+        ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
+        for(int i = 0; i < population.size(); i++) {
+            fitnessScores.add(population.get(i).score);
+        }
 
+        // find the top 2 individuals in the population
+        int firstLargest = Integer.MIN_VALUE;
+        int firstLargestIndex = -1;
+        int secondLargest = Integer.MIN_VALUE;
+        int secondLargestIndex = -1;
 
-        return null;
+        for(int i = 0; i < fitnessScores.size(); i++) {
+            int currentScore = fitnessScores.get(i);
+            if(currentScore > firstLargest) {
+                secondLargest = firstLargest;
+                secondLargestIndex = firstLargestIndex;
+                firstLargest = currentScore;
+                firstLargestIndex = i;
+
+            } else if (currentScore > secondLargest) {
+                secondLargest = currentScore;
+                secondLargestIndex = i;
+            }
+        }
+
+        // return the top 2 individuals
+        return new Tower[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
     }
 
-    // Tower Problem cross-over method
+    // TODO: Tower Problem cross-over method
     public Tower[] towerCrossOver(Tower parent1, Tower parent2) {
 
 
         return null;
     }
 
-    // Tower Problem mutation method
+    // TODO: Tower Problem mutation method
     public Tower[] towerMutation(Tower child) {
 
 
