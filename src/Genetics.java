@@ -12,60 +12,46 @@ public class Genetics {
 
 
     // Number Problem selection method
-    public NumberGroup[] numberSelection(List<NumberGroup> GenePool) {
+    public NumberGroup[] numberSelection(List<NumberGroup> population) {
+        // put all fitness scores into a list
         ArrayList<Double> fitnessScores = new ArrayList<Double>();
-
-        // put fitness scores in fitness scores list
-        double sum = 0.0;
-        for(int i = 0; i < GenePool.size(); i++) {
-            double currentScore = GenePool.get(i).getScore();
-            sum += currentScore;
-            fitnessScores.add(sum);
+        for(int i = 0; i < population.size(); i++) {
+            fitnessScores.add(population.get(i).score);
         }
 
-        // calculate probability using fitness scores
-        Random random = new Random();
-        double roll1 = 100.0 * random.nextDouble();
-        double roll2 = 100.0 * random.nextDouble();
-        int[] topTwo = new int[2];
-        topTwo[0] = -1;
-        topTwo[1] = -1;
+        // find the top 2 individuals in the population
+        double firstLargest = Double.NEGATIVE_INFINITY;
+        int firstLargestIndex = -1;
+        double secondLargest = Double.NEGATIVE_INFINITY;
+        int secondLargestIndex = -1;
 
+        for(int i = 0; i < fitnessScores.size(); i++) {
+            double currentScore = fitnessScores.get(i);
+            if(currentScore > firstLargest) {
+                secondLargest = firstLargest;
+                secondLargestIndex = firstLargestIndex;
+                firstLargest = currentScore;
+                firstLargestIndex = i;
 
-        for (int i = 0; i < fitnessScores.size() && topTwo[0] != -1; i++) {
-//            fitnessScores.set(i, fitnessScores.get(i) * (100/sum));
-            if(roll1 < (fitnessScores.get(i) * (100/sum))) {
-                topTwo[0] = i;
+            } else if (currentScore > secondLargest) {
+                secondLargest = currentScore;
+                secondLargestIndex = i;
             }
         }
 
+        // return the top 2 individuals
+        return new NumberGroup[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
 
-        sum -= fitnessScores.get(topTwo[0]);
-        fitnessScores.remove(topTwo[0]);
-
-
-        for (int i = 0; i < fitnessScores.size() && topTwo[1] != -1; i++) {
-//            fitnessScores.set(i, fitnessScores.get(i) * (100/sum));
-            if(roll2 < (fitnessScores.get(i) * (100/sum))) {
-                topTwo[1] = i;
-            }
-        }
-
-
-        NumberGroup[] results = new NumberGroup[2];
-        results[0] = GenePool.get(topTwo[0]);
-        results[1] = GenePool.get(topTwo[1]);
-
-        return results;
     }
 
     // Number Problem cross-over method
-    public NumberGroup numberCrossOver(NumberGroup parent1, NumberGroup parent2) {
-        double[] firstParent = parent1.numberGroup;
-        double[] secondParent = parent2.numberGroup;
-        int size = firstParent.length;
+    public NumberGroup[] numberCrossOver(NumberGroup parent1, NumberGroup parent2) {
+        int[] firstParentGenes = parent1.numberIDGroup;
+        int[] secondParentGenes = parent2.numberIDGroup;
+        int size = firstParentGenes.length;
 
-        double[] child = new double[size];
+        int[] firstChildGenes = new int[size];
+        int[] secondChildGenes = new int[size];
 
         // --------- Determine Swath section ----------------
         Random random = new Random();
@@ -74,53 +60,76 @@ public class Genetics {
         int firstSlice = Math.min(number1, number2);
         int secondSlice = Math.max(number1, number2);
 
-        System.out.println(firstSlice);
-        System.out.println(secondSlice);
+//        System.out.println(firstSlice);
+//        System.out.println(secondSlice);
 
-        List<Double> VisitedSoFar = new ArrayList<Double>();
-        // ------------- copy down swath section from parent 1 to child
+        // Keep track of values already in each child
+        List<Integer> VisitedSoFar1 = new ArrayList<Integer>();
+        List<Integer> VisitedSoFar2 = new ArrayList<Integer>();
+
+        /*  copy down swath section from parent 1 to child 1
+            copy down swath section from parent 2 to child 2
+         */
         for(int i = firstSlice; i < secondSlice; i++) {
-            child[i] = firstParent[i];
-            VisitedSoFar.add(firstParent[i]);
+            firstChildGenes[i] = firstParentGenes[i];
+            VisitedSoFar1.add(firstParentGenes[i]);
+
+            secondChildGenes[i] = secondParentGenes[i];
+            VisitedSoFar2.add(secondParentGenes[i]);
         }
-        System.out.println(Arrays.toString(child));
+//        System.out.println(Arrays.toString(firstChildGenes));
+//        System.out.println(Arrays.toString(secondChildGenes));
 
         // Ordered Crossover
-        int currentIndex = secondSlice;
+        int currentFirstIndex = secondSlice;
+        int currentSecondIndex = secondSlice;
         for(int i = 0; i < size; i++) {
-            double currentDouble = secondParent[(secondSlice + i) % size];
-            if(!(VisitedSoFar.contains(currentDouble))) {
-                child[currentIndex] = currentDouble;
-                VisitedSoFar.add(currentDouble);
-                System.out.println(Arrays.toString(child));
-                currentIndex = (currentIndex + 1) % size;
+            int currentFirstGene = secondParentGenes[(secondSlice + i) % size];
+            int currentSecondGene = firstParentGenes[(secondSlice + i) % size];
+
+            if(!(VisitedSoFar1.contains(currentFirstGene))) {
+                firstChildGenes[currentFirstIndex] = currentFirstGene;
+                VisitedSoFar1.add(currentFirstGene);
+//                System.out.println(Arrays.toString(firstChildGenes));
+                currentFirstIndex = (currentFirstIndex + 1) % size;
+            }
+
+            if(!(VisitedSoFar2.contains(currentSecondGene))) {
+                secondChildGenes[currentSecondIndex] = currentSecondGene;
+                VisitedSoFar2.add(currentSecondGene);
+//                System.out.println(Arrays.toString(secondChildGenes));
+                currentSecondIndex = (currentSecondIndex + 1) % size;
             }
         }
 
-        return new NumberGroup(child);
+        return new NumberGroup[] {new NumberGroup(firstChildGenes), new NumberGroup(secondChildGenes)};
     }
 
     // Number Problem mutation method
-    public NumberGroup numberMutation(NumberGroup child) {
-        double[] genes = child.numberGroup;
+    public void numberMutation(NumberGroup child) {
+        int[] childGenes = child.numberIDGroup;
         int size = child.size;
-        double mutationProb = 10;
+        double mutationProb = 10; // Mutation probability
         Random random = new Random();
         for(int i = 0; i < size; i++) {
+            // if mutation occurs
             if(random.nextInt(100) < mutationProb) {
+                // get random swap index
                 int swapIndex = random.nextInt(size);
-                double currentValue = genes[i];
-                genes[i] = genes[swapIndex];
-                genes[swapIndex] = currentValue;
+
+                // swap the values at current index and swap index
+                int currentValue = childGenes[i];
+                childGenes[i] = childGenes[swapIndex];
+                childGenes[swapIndex] = currentValue;
             }
         }
 
-        return new NumberGroup(genes);
+        child.numberIDGroup = childGenes;
     }
 
 
     // Tower Problem selection method
-    public Tower[] towerSelection() {
+    public Tower[] towerSelection(List<NumberGroup> GenePool) {
 
 
         return null;

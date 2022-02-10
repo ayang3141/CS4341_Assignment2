@@ -1,9 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.*;
 
 public class NumberGroup {
 
-    double[] numberGroup = new double[40];
+    int[] numberIDGroup = new int[40];
+    HashMap<Integer, Double> numberID_Map;
 
     double score = 0;
     int size = 40;
@@ -26,25 +29,26 @@ public class NumberGroup {
 
     }
 
-    public NumberGroup(double[] numbers) {
-        this.numberGroup = numbers;
+    public NumberGroup(int[] numberIDGroup) {
+        this.numberIDGroup = numberIDGroup;
     }
 
 
     public double getScore() {
-        return getProduct() + getSum() + getRange();
+        this.score = getProduct() + getSum() + getRange();
+        return this.score;
     }
 
 
     private double getRange() {
-        double max = Integer.MIN_VALUE;
-        double min = Integer.MAX_VALUE;
+        double max = Double.NEGATIVE_INFINITY;
+        double min = Double.POSITIVE_INFINITY;
         for(int i = rangeBinStart; i < rangeBinEnd; i++) {
-            double currentValue = numberGroup[i];
+            double currentValue = numberID_Map.get(this.numberIDGroup[i]);
             if(currentValue > max) {
                 max = currentValue;
             }
-            else if(currentValue < min) {
+            if(currentValue < min) {
                 min = currentValue;
             }
         }
@@ -54,7 +58,7 @@ public class NumberGroup {
     private double getSum() {
         double sum = 0.0;
         for(int i = sumBinStart; i < sumBinEnd; i++) {
-            sum += numberGroup[i];
+            sum += numberID_Map.get(this.numberIDGroup[i]);
         }
         return sum;
     }
@@ -62,17 +66,21 @@ public class NumberGroup {
     private double getProduct() {
         double product = 1.0;
         for(int i = productBinStart; i < productBinEnd; i++) {
-            product *= numberGroup[i];
+            product *= numberID_Map.get(this.numberIDGroup[i]);
         }
         return product;
     }
 
+    public static Comparator<NumberGroup> fitScoreComparator = new Comparator<NumberGroup>() {
 
+        public int compare(NumberGroup N1, NumberGroup N2) {
+            double score1 = N1.score;
+            double score2 = N2.score;
 
+            /*For ascending order*/
+//            return Double.compare(score1, score2);
 
-
-
-
-
-
+            /*For descending order*/
+            return Double.compare(score2, score1);
+        }};
 }
