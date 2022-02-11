@@ -24,11 +24,6 @@ public class NumberGroup {
     int unusedBinEnd = 40;
 
 
-
-    public NumberGroup() {
-
-    }
-
     public NumberGroup(int[] numberIDGroup) {
         this.numberIDGroup = numberIDGroup;
     }
