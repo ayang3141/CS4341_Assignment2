@@ -112,13 +112,14 @@ public class Program {
                 }
                 thePopulation = newPopulation;
 
+
+                TIME_RUN_OUT = (System.nanoTime() - startTime)/(1000000000) >= maxRunTime;
             }
 
 
         }
         else if (PROBLEM_2) { // DO TOWER GENETIC ALGORITHM
             HashMap<Integer, TowerPiece> towerPieceID = new HashMap<>();
-
             ArrayList<Integer> initialIndividualIDs = new ArrayList<>();
 
             // read file to determine start values
@@ -147,7 +148,7 @@ public class Program {
 
 
             List<Tower> thePopulation = new ArrayList<Tower>(15);
-            thePopulation.add(new Tower(initialIndividualID));
+            thePopulation.add(new Tower(initialIndividualID, towerPieceID));
 
             // generate the initial population
             while(thePopulation.size() < 10) {
@@ -158,12 +159,12 @@ public class Program {
                 shuffle(newIndividual);
 
                 // add the randomly shuffled individual to the population
-                thePopulation.add(new Tower(newIndividual));
+                thePopulation.add(new Tower(newIndividual, towerPieceID));
             }
 
             // Compute fitness score for each individual in population
             for(int i = 0; i < thePopulation.size(); i++) {
-                thePopulation.get(i).calculateScore();
+                thePopulation.get(i).getScore();
             }
 
 
@@ -193,7 +194,7 @@ public class Program {
 
                 // Compute fitness for each individual in new population
                 for(int i = 0; i < thePopulation.size(); i++) {
-                    thePopulation.get(i).calculateScore();
+                    thePopulation.get(i).getScore();
                 }
 
 
@@ -204,6 +205,8 @@ public class Program {
                     newPopulation.add(thePopulation.get(i));
                 }
                 thePopulation = newPopulation;
+
+                TIME_RUN_OUT = (System.nanoTime() - startTime)/(1000000000) >= maxRunTime;
             }
 
         }

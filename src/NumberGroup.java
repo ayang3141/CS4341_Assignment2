@@ -1,32 +1,32 @@
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.*;
 
 public class NumberGroup {
 
-    int[] numberIDGroup = new int[40];
+    private int[] numberIDGroup = new int[40];
     HashMap<Integer, Double> numberIDHashMap;
 
-    double score = 0;
-    int size = 40;
+    private double score = 0;
+    final int size = 40;
 
-    int productBinStart = 0;
-    int productBinEnd = 10;
+    final int productBinEnd = 10;
+    final int sumBinEnd = 20;
+    final int rangeBinEnd = 30;
+    final int productBinStart = 0;
+    final int sumBinStart = 10;
+    final int rangeBinStart = 20;
 
-    int sumBinStart = 10;
-    int sumBinEnd = 20;
+    public int[] getNumberIDGroup() {
+        return numberIDGroup;
+    }
 
-    int rangeBinStart = 20;
-    int rangeBinEnd = 30;
+    public void setNumberIDGroup(int[] numberIDGroup) {
+        this.numberIDGroup = numberIDGroup;
+        this.calculateScore();
+    }
 
-    int unusedBinStart = 30;
-    int unusedBinEnd = 40;
-
-
-
-    public NumberGroup() {
-
+    public double getScore(){
+        return this.score;
     }
 
     public NumberGroup(int[] numberIDGroup) {

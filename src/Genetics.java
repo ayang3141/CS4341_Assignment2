@@ -4,8 +4,6 @@ import java.util.*;
 
 public class Genetics {
 
-
-
     public Genetics() {
 
     }
@@ -16,7 +14,7 @@ public class Genetics {
         // put all fitness scores into a list
         ArrayList<Double> fitnessScores = new ArrayList<Double>();
         for(int i = 0; i < population.size(); i++) {
-            fitnessScores.add(population.get(i).score);
+            fitnessScores.add(population.get(i).getScore());
         }
 
         // find the top 2 individuals in the population
@@ -46,8 +44,8 @@ public class Genetics {
 
     // Number Problem cross-over method
     public NumberGroup[] numberCrossOver(NumberGroup parent1, NumberGroup parent2) {
-        int[] firstParentGenes = parent1.numberIDGroup;
-        int[] secondParentGenes = parent2.numberIDGroup;
+        int[] firstParentGenes = parent1.getNumberIDGroup();
+        int[] secondParentGenes = parent2.getNumberIDGroup();
         int size = firstParentGenes.length;
 
         int[] firstChildGenes = new int[size];
@@ -107,7 +105,7 @@ public class Genetics {
 
     // Number Problem mutation method
     public void numberMutation(NumberGroup child) {
-        int[] childGenes = child.numberIDGroup;
+        int[] childGenes = child.getNumberIDGroup();
         int size = child.size;
         double mutationProb = 10; // Mutation probability
         Random random = new Random();
@@ -124,7 +122,7 @@ public class Genetics {
             }
         }
 
-        child.numberIDGroup = childGenes;
+        child.setNumberIDGroup(childGenes);
     }
 
 
@@ -133,7 +131,7 @@ public class Genetics {
         // put all fitness scores into a list
         ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
         for(int i = 0; i < population.size(); i++) {
-            fitnessScores.add(population.get(i).score);
+            fitnessScores.add(population.get(i).getScore());
         }
 
         // find the top 2 individuals in the population
@@ -168,15 +166,36 @@ public class Genetics {
     }
 
     // TODO: Tower Problem mutation method
-    public Tower[] towerMutation(Tower child) {
+    public void towerMutation(Tower child) {
+        Random rand = new Random();
+        int mutationType = rand.nextInt(1)+1;
+        int[] towerPieceIdGroup = child.getTowerpieceIDGroup();
+        int towerSize = towerPieceIdGroup.length;
 
+        if(mutationType==1) { // swap
 
-        return null;
+            int pos1 = rand.nextInt(towerSize-1);
+            int pos2 = rand.nextInt(towerSize-1);
+
+            int oldPos1 = child.getTowerpieceIDGroup()[pos1];
+            towerPieceIdGroup[pos1] = towerPieceIdGroup[pos2];
+            towerPieceIdGroup[pos2] = oldPos1;
+
+        } else { //do boundary shift
+            int shift = rand.nextInt(1); //0 left 1 right
+            if(child.getTopBinEnd() == child.unusedBinEnd){ //unusedBin is empty
+                shift = 0; //go left
+            } else if(child.getMiddleBinEnd() == child.bottomBinEnd) { //middleBin is empty
+                shift = 1; //go right
+            }
+            //TODO: mention assumption of input size >= 4 tower pieces in writeup
+            if(shift == 0){
+                child.shift(-1);
+
+            } else {
+                child.shift(1);
+            }
+        }
+        child.setTowerPieceIdGroup(towerPieceIdGroup);
     }
-
-
-
-
-
-
 }
