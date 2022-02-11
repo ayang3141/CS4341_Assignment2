@@ -4,98 +4,123 @@ import java.util.HashMap;
 
 public class Tower {
 
-    int[] towerpieceIDGroup;
-    HashMap<Integer, TowerPiece> towerpieceID_Map;
+    public int[] getTowerpieceIDGroup() {
+        return towerpieceIDGroup;
+    }
 
-    int bottomBinStart = 0;
-    int bottomBinEnd = 10;
+    private int[] towerpieceIDGroup;
+    private final HashMap<Integer, TowerPiece> towerpieceID_Map;
 
-    int middleBinStart = 10;
-    int middleBinEnd = 20;
+    final int bottomBinEnd = 1;
+    private int middleBinEnd = 20; //TODO: fix this
+    private int topBinEnd = 30; //TODO: fix this (this is 1+middlebinend)
+    final int unusedBinEnd;
 
-    int topBinStart = 20;
-    int topBinEnd = 30;
-
-    int unusedBinStart = 30;
-    int unusedBinEnd = 40;
-
-    int height;
-    int cost;
-    int score;
+    private boolean isValid = false;
+    private int height;
+    private int cost;
+    private int score;
 
     // constructor for the Tower class
-    public Tower(int[] towerpieceIDGroup) {
+    public Tower(int[] towerpieceIDGroup, HashMap<Integer, TowerPiece> idMap) {
         this.towerpieceIDGroup = towerpieceIDGroup;
+        this.towerpieceID_Map = idMap;
+        this.unusedBinEnd = towerpieceIDGroup.length-1;
+    }
+
+    public boolean isValid(){
+        return this.isValid;
+    }
+    public int getScore() {
+        return this.score;
+    }
+
+    public void shift(int offset){ //TODO: this assumes legal use (return error?)
+        this.topBinEnd += offset;
+        this.middleBinEnd += offset;
+    }
+
+    public int getMiddleBinEnd() {
+        return this.middleBinEnd;
+    }
+
+    public int getTopBinEnd() {
+        return this.topBinEnd;
+    }
+
+    public void setTowerPieceIdGroup(int[] group){
+        this.towerpieceIDGroup = group;
+        this.updateScore();
     }
 
     // method for calculating score
-    public int calculateScore() {
-        this.height = getHeight();
-        this.cost = getCost();
-
-        if(validTower()) {
-            this.score = 10 + (int)Math.pow(height, 2.0) - cost;
-            return this.score;
+    private void updateScore() {// do not use this, use getScore() instead
+        if(isValidTower()) {
+            updateHeight();
+            updateCost();
+            this.score = 10 + (int)Math.pow(this.height, 2.0) - this.cost;
+        } else {
+            this.score = 0;
         }
-        this.score = 0;
-        return 0;
     }
 
-    // TODO: method for checking if the tower is a valid tower
-    private boolean validTower() {
+    //try not to use this
+    private boolean isValidTower() {
+        //Rules 1, 2, and 3
+        if(!isValidBottom() || !isValidTop() || !isValidMiddle()){
+            return false;
+        }
 
-        return false;
+        //Rule 4: A piece in a tower can, at most, be as wide as the piece below it.
+        //Rule 5: A piece in a tower can only support towerPiece.strength pieces above it.
+        TowerPiece tp =  towerpieceID_Map.get(towerpieceIDGroup[0]);
+        if(tp.getStrength() < this.height-1){ //check if door can support tower
+            return false;
+        }
+        int prevWidth = tp.getWidth();
+        int currWidth;
+        for(int i=1; i<topBinEnd; i++){ //width must descend
+            TowerPiece t = towerpieceID_Map.get(towerpieceIDGroup[i]);
+            if(t.getStrength() < this.height-(i+1)){ //rule 5
+                return false;
+            }
+            currWidth = t.getWidth();
+            if(prevWidth < currWidth){ //rule 4
+                return false;
+            }
+            prevWidth = currWidth;
+        }
+        return true;
     }
 
-    // TODO: method for getting the most up-to-date height
-    private int getHeight() {
-        // calculate up-to-date height
-        return 0;
+    private void updateHeight() { //assumes valid tower
+        this.height = this.towerpieceIDGroup.length;
     }
 
-    // TODO: method for getting the most up-to-date cost
-    private int getCost() {
-        // calculate up-to-date cost
-        return 0;
+    private void updateCost() { //assumes valid tower
+       int sum = 0;
+       for(int id=0; id<topBinEnd; id++){
+           sum+=towerpieceID_Map.get(towerpieceIDGroup[id]).getCost();
+       }
+       this.cost = sum;
     }
 
-
-    // TODO: check if bottom section is valid
     private boolean isValidBottom() {
-
-
-        return false;
+        return towerpieceID_Map.get(towerpieceIDGroup[0]).getPieceType().equals("Door");
     }
 
-    // TODO: check if middle section is valid
     private boolean isValidMiddle() {
-
-
-        return false;
-    }
-
-    // TODO: check if top section is valid
-    private boolean isValidTop() {
-
-
-        return false;
-    }
-
-    // TODO: check if unused section is valid
-    private boolean isValidUnused() {
-
-
-        return false;
-    }
-
-    public static Comparator<Tower> fitScoreComparator = new Comparator<Tower>() {
-
-        public int compare(Tower T1, Tower T2) {
-            double score1 = T1.score;
-            double score2 = T2.score;
-
-            /*For descending order*/
-            return Double.compare(score2, score1);
+        for(int i=1; i<topBinEnd; i++) {
+            if (!towerpieceID_Map.get(towerpieceIDGroup[i]).getPieceType().equals("Wall"))
+                return false;
         }
-    };
+        return true;
+    }
+
+    private boolean isValidTop() {
+        return towerpieceID_Map.get(towerpieceIDGroup[topBinEnd-1]).getPieceType().equals("Lookout");
+    }
+
+
+    public static Comparator<Tower> fitScoreComparator = Comparator.comparingDouble(Tower::getScore);
 }

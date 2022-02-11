@@ -2,12 +2,12 @@ public class TowerPiece {
     // This class handles the Tower Pieces
 
     String pieceType;
-    int width;
-    int strength;
-    int cost;
+    private final int width;
+    private final int strength;
+    private final int cost;
 
     public TowerPiece(String pieceType, int width, int strength, int cost) {
-        this.pieceType = pieceType;
+        this.pieceType = pieceType.trim();
         this.width = width;
         this.strength = strength;
         this.cost = cost;
