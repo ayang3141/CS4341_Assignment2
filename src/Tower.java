@@ -1,4 +1,5 @@
 import java.lang.Math;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class Tower {
@@ -7,16 +8,16 @@ public class Tower {
     HashMap<Integer, TowerPiece> towerpieceID_Map;
 
     int bottomBinStart = 0;
-    int bottomBinEnd = 1;
+    int bottomBinEnd = 10;
 
-    int middleBinStart;
-    int middleBinEnd;
+    int middleBinStart = 10;
+    int middleBinEnd = 20;
 
-    int topBinStart;
-    int topBinEnd;
+    int topBinStart = 20;
+    int topBinEnd = 30;
 
-    int unusedBinStart;
-    int unusedBinEnd;
+    int unusedBinStart = 30;
+    int unusedBinEnd = 40;
 
     int height;
     int cost;
@@ -25,11 +26,10 @@ public class Tower {
     // constructor for the Tower class
     public Tower(int[] towerpieceIDGroup) {
         this.towerpieceIDGroup = towerpieceIDGroup;
-
     }
 
     // method for calculating score
-    public int getScore() {
+    public int calculateScore() {
         this.height = getHeight();
         this.cost = getCost();
 
@@ -43,24 +43,14 @@ public class Tower {
 
     // TODO: method for checking if the tower is a valid tower
     private boolean validTower() {
-        // 1) check that bottom piece is a door piece
-
-        // 2) check that the top piece is a lookout piece
-
-        // 3) check middle section only contains wall pieces
-
-        // 4) pieces can, at most, be as wide as the piece below it
-
-        // 5) piece can support its strength value in pieces above it
-
 
         return false;
     }
 
-    // method for getting the most up-to-date height
+    // TODO: method for getting the most up-to-date height
     private int getHeight() {
         // calculate up-to-date height
-        return topBinEnd - 1;
+        return 0;
     }
 
     // TODO: method for getting the most up-to-date cost
@@ -91,13 +81,21 @@ public class Tower {
         return false;
     }
 
+    // TODO: check if unused section is valid
+    private boolean isValidUnused() {
 
 
+        return false;
+    }
 
+    public static Comparator<Tower> fitScoreComparator = new Comparator<Tower>() {
 
+        public int compare(Tower T1, Tower T2) {
+            double score1 = T1.score;
+            double score2 = T2.score;
 
-
-
-
-
+            /*For descending order*/
+            return Double.compare(score2, score1);
+        }
+    };
 }

@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.*;
@@ -5,39 +7,60 @@ import java.util.*;
 public class Program {
 
 
-
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         // Initialize useful variables
         Genetics geneticAlgo = new Genetics();
-        HashMap<Integer, Double> numberID = new HashMap<Integer, Double>();
-        HashMap<Integer, TowerPiece> towerPieceID = new HashMap<Integer, TowerPiece>();
 
-        // TODO: read file to determine start values
-        // initial population will be in list
-
-
-
-
+        // handle args
+        boolean PROBLEM_1 = Integer.parseInt(args[0]) == 1;
+        boolean PROBLEM_2 = !PROBLEM_1;
+        String inputFilePath = args[1];
+        int maxRunTime = Integer.parseInt(args[2]);
+        final int prob1InputSize = 40;
 
 
-        if(PROBLEM_1) { // DO NUMBER GENETIC ALGORITHM
+        if(PROBLEM_1) {
+            // DO NUMBER GENETIC ALGORITHM
             // initial population will be in list
-            double[] initialIndividual = new double[];
-            int[] initialIndividualID = new int[]; // array that the algorithm will be manipulating
+            HashMap<Integer, Double> numberID = new HashMap<Integer, Double>();
 
-            // associate individuals with a unique ID
-            int ID = 1;
-            for(int i = 0; i < initialIndividual.length; i++) {
-                numberID.put(ID, initialIndividual[i]);
-                initialIndividualID[i] = ID;
+            int[] initialIndividualIDs = new int[prob1InputSize]; // array that the algorithm will be manipulating
+
+            // read file to determine start values
+            try {
+                File reader = new File(inputFilePath);
+                Scanner sc = new Scanner(reader);
+                int id = 1; //numberID
+                while (sc.hasNextLine()) {
+                    String data = sc.nextLine();
+                    double val = Double.parseDouble(data.trim());
+                    numberID.put(id, val); //add to (id, val) map
+                    initialIndividualIDs[id] = id;
+                    id++;
+                }
+                sc.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred reading the input");
+                e.printStackTrace();
             }
+
+//            // associate individuals with a unique ID
+//            for(int i = 0; i < initialIndividuals.size(); i++) {
+//                numberID.put(i, initialIndividuals.get(i));
+//                initialIndividualIDs[i] = i;
+//            }
+
+
+
+
+
             List<NumberGroup> thePopulation = new ArrayList<NumberGroup>(15);
-            thePopulation.add(new NumberGroup(initialIndividualID));
+            thePopulation.add(new NumberGroup(initialIndividualIDs));
 
             // generate the initial population
             while(thePopulation.size() < 10) {
                 // generate a new clone of the initial individual
-                int[] newIndividual = initialIndividualID.clone();
+                int[] newIndividual = initialIndividualIDs.clone();
 
                 // randomly shuffle the new clone
                 shuffle(newIndividual);
@@ -53,6 +76,9 @@ public class Program {
             }
 
 
+            boolean POPULATION_NOT_CONVERGED = true;
+            boolean TIME_RUN_OUT = true;
+            long startTime = System.nanoTime();
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Select the top 2 individuals to be parents
@@ -91,16 +117,35 @@ public class Program {
 
         }
         else if (PROBLEM_2) { // DO TOWER GENETIC ALGORITHM
-            // initial population will be in list
-            TowerPiece[] initialIndividual = new TowerPiece[];
-            int[] initialIndividualID = new int[]; // array that the algorithm will be manipulating
+            HashMap<Integer, TowerPiece> towerPieceID = new HashMap<>();
 
-            // associate individuals with a unique ID
-            int ID = 1;
-            for(int i = 0; i < initialIndividual.length; i++) {
-                towerPieceID.put(ID, initialIndividual[i]);
-                initialIndividualID[i] = ID;
+            ArrayList<Integer> initialIndividualIDs = new ArrayList<>();
+
+            // read file to determine start values
+            try {
+                File reader = new File(inputFilePath);
+                Scanner sc = new Scanner(reader);
+                int id = 1; //towerPieceID
+                while (sc.hasNextLine()) {
+                    String[] data = sc.nextLine().trim().split(", ");
+                    TowerPiece tp = new TowerPiece(data[0], Integer.parseInt(data[1]),
+                            Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                    towerPieceID.put(id, tp); //add to (id, val) map
+                    initialIndividualIDs.add(id);
+                    id++;
+                }
+                sc.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred reading the input");
+                e.printStackTrace();
             }
+
+            int[] initialIndividualID = new int[initialIndividualIDs.size()];
+            for(int i = 0; i < initialIndividualIDs.size(); i++){
+                initialIndividualID[i] = initialIndividualIDs.get(i);
+            }
+
+
             List<Tower> thePopulation = new ArrayList<Tower>(15);
             thePopulation.add(new Tower(initialIndividualID));
 
@@ -121,11 +166,15 @@ public class Program {
                 thePopulation.get(i).calculateScore();
             }
 
+
+            boolean POPULATION_NOT_CONVERGED = true;
+            boolean TIME_RUN_OUT = true;
+            long startTime = System.nanoTime();
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
 
                 // Select the top 2 individuals to be parents
                 // Select the top 2 individuals to be parents
-                NumberGroup[] topTwo = geneticAlgo.towerSelection(thePopulation);
+                Tower[] topTwo = geneticAlgo.towerSelection(thePopulation);
 
                 // generate new children until the population is at least 10
                 while(thePopulation.size() >= 10) {
@@ -149,14 +198,12 @@ public class Program {
 
 
                 // Only keep the TOP 10 individuals of the population
-                Collections.sort(thePopulation, NumberGroup.fitScoreComparator);
+                Collections.sort(thePopulation, Tower.fitScoreComparator);
                 List<Tower> newPopulation = new ArrayList<Tower>(15);
                 for(int i = 0; i < 10; i++) {
                     newPopulation.add(thePopulation.get(i));
                 }
                 thePopulation = newPopulation;
-
-
             }
 
         }
