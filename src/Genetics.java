@@ -100,7 +100,8 @@ public class Genetics {
             }
         }
 
-        return new NumberGroup[] {new NumberGroup(firstChildGenes), new NumberGroup(secondChildGenes)};
+        return new NumberGroup[] {new NumberGroup(firstChildGenes, parent1.getNumberIDHashMap()),
+                new NumberGroup(secondChildGenes,  parent2.getNumberIDHashMap())};
     }
 
     // Number Problem mutation method
