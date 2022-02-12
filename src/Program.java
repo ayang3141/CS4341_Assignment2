@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.*;
@@ -16,7 +17,7 @@ public class Program {
         boolean PROBLEM_2 = !PROBLEM_1;
         String inputFilePath = args[1];
         int maxRunTime = Integer.parseInt(args[2]);
-        final int prob1InputSize = 8;
+        final int prob1InputSize = 40;
 
 
         if(PROBLEM_1) {
@@ -28,32 +29,14 @@ public class Program {
 
             // read file to determine start values
             try {
-                File reader = new File(inputFilePath);
-                Scanner sc = new Scanner(reader);
-                int id = 0; //numberID
-                while (sc.hasNextLine()) {
-                    String data = sc.nextLine();
-                    double val = Double.parseDouble(data.trim());
-                    numberID.put(id, val); //add to (id, val) map
-                    initialIndividualIDs[id] = id;
-                    id++;
-                }
-                sc.close();
+                processNumberFile(inputFilePath, initialIndividualIDs, numberID);
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred reading the input");
                 e.printStackTrace();
             }
 
-//            // associate individuals with a unique ID
-//            for(int i = 0; i < initialIndividuals.size(); i++) {
-//                numberID.put(i, initialIndividuals.get(i));
-//                initialIndividualIDs[i] = i;
-//            }
-
-
-
-
-
+            // Initialize population list to hold individuals
+            // add initial individual to population list
             List<NumberGroup> thePopulation = new ArrayList<NumberGroup>(15);
             thePopulation.add(new NumberGroup(initialIndividualIDs, numberID));
 
@@ -130,8 +113,9 @@ public class Program {
 //                    System.out.println("converged after " + generationNum + " generations.");
 //                    POPULATION_NOT_CONVERGED = false;
 //                }
-            }
+            } // end of genetic algorithm loop
 
+            // PRINT OUT FINAL RESULTS
             System.out.println("Final Population: ");
             for(NumberGroup indiv : thePopulation){
                 System.out.println(indiv.toString());
@@ -148,47 +132,32 @@ public class Program {
             }
             System.out.println("\nScore: " + best.getScore());
 
-        }
-
-
-
-
-
-
-
-
+        } // end of problem 1 if statement
         else if (PROBLEM_2) { // DO TOWER GENETIC ALGORITHM
             HashMap<Integer, TowerPiece> towerPieceID = new HashMap<>();
             ArrayList<Integer> initialIndividualIDs = new ArrayList<>();
 
             // read file to determine start values
             try {
-                File reader = new File(inputFilePath);
-                Scanner sc = new Scanner(reader);
-                int id = 1; //towerPieceID
-                while (sc.hasNextLine()) {
-                    String[] data = sc.nextLine().trim().split(", ");
-                    TowerPiece tp = new TowerPiece(data[0], Integer.parseInt(data[1]),
-                            Integer.parseInt(data[2]), Integer.parseInt(data[3]));
-                    towerPieceID.put(id, tp); //add to (id, val) map
-                    initialIndividualIDs.add(id);
-                    id++;
-                }
-                sc.close();
+                processTowerFile(inputFilePath, initialIndividualIDs, towerPieceID);
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred reading the input");
                 e.printStackTrace();
             }
 
+            // convert towerpiece list into array
             int[] initialIndividualID = new int[initialIndividualIDs.size()];
             for(int i = 0; i < initialIndividualIDs.size(); i++){
                 initialIndividualID[i] = initialIndividualIDs.get(i);
             }
+            System.out.println(Arrays.toString(initialIndividualID));
 
-
+            // Initialize population list to hold individuals
+            // add initial individual into population list
             List<Tower> thePopulation = new ArrayList<Tower>(15);
             thePopulation.add(new Tower(initialIndividualID, towerPieceID));
 
+            // TODO: Major issue with passing boundary information to children
             // generate the initial population
             while(thePopulation.size() < 10) {
                 // generate a new clone of the initial individual
@@ -201,6 +170,8 @@ public class Program {
                 thePopulation.add(new Tower(newIndividual, towerPieceID));
             }
 
+            System.out.println("Generated Initial Population");
+
             // Compute fitness score for each individual in population
             for(int i = 0; i < thePopulation.size(); i++) {
                 thePopulation.get(i).getScore();
@@ -210,14 +181,17 @@ public class Program {
             boolean POPULATION_NOT_CONVERGED = true;
             boolean TIME_RUN_OUT = true;
             long startTime = System.nanoTime();
+            int generationNum = 1;
             while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
+
+                System.out.println("Generation: " + generationNum);
 
                 // Select the top 2 individuals to be parents
                 // Select the top 2 individuals to be parents
                 Tower[] topTwo = geneticAlgo.towerSelection(thePopulation);
 
                 // generate new children until the population is at least 10
-                while(thePopulation.size() >= 10) {
+                while(thePopulation.size() <= 10) {
                     // Cross-Over: generate 2 new children
                     Tower[] newChildren = geneticAlgo.towerCrossOver(topTwo[0], topTwo[1]);
 
@@ -246,9 +220,14 @@ public class Program {
                 thePopulation = newPopulation;
 
                 TIME_RUN_OUT = (System.nanoTime() - startTime)/(1000000000) >= maxRunTime;
-            }
-        }
-    }
+                generationNum++;
+            } // end of genetic algorithm loop
+
+
+
+            System.out.println("Tower problem successfully ended");
+        } // end of problem 2 if statement
+    } // end of Main function
 
     public static void shuffle(int[] array) {
         Random random = new Random();
@@ -264,49 +243,34 @@ public class Program {
         array[j] = temp;
     }
 
+    public static void processNumberFile(String fileName, int[] IDList, HashMap<Integer, Double> IDMap) throws FileNotFoundException {
+        File reader = new File(fileName);
+        Scanner sc = new Scanner(reader);
+        int id = 0; //numberID
+        while (sc.hasNextLine()) {
+            String data = sc.nextLine();
+            double val = Double.parseDouble(data.trim());
+            IDMap.put(id, val); //add to (id, val) map
+            IDList[id] = id;
+            id++;
+        }
+        sc.close();
+    }
 
-//    public ArrayList<Object> getPopulation() {
-//        //File I/O
-//        File levelFile = new File(this.fileName);
-//
-//        //count total chars
-//        BufferedReader colScanner = new BufferedReader(new FileReader(levelFile));
-//        String line = null;
-//        while((line = colScanner.readLine()) != null)
-//        {
-//            System.out.println(line);
-//            //tokenize it here
-//            String[] tokens = line.split("\t");
-//            numCols = tokens.length;
-//            numRows++;
-//        }
-//
-//        System.out.println(numCols);
-//        System.out.println(numRows);
-//
-//        Scanner sc = new Scanner(levelFile);
-//        sc.useDelimiter("(\\r\\n)|\\t");
-//        char[][] level = new char[numRows][numCols];
-//
-//
-//
-//        //now, actually put them in a list. would be better to do this all in one loop, but this works.
-//        for (int i = 0; i < numRows; i++)
-//        {
-//            for (int j = 0; j < numCols; j++)
-//            {
-//                if(sc.hasNext())
-//                {
-//                    char ch = sc.next().charAt(0); // Convert to char
-//                    level[i][j] = ch;
-//                    //System.out.println(ch);
-//                    //System.out.println(level[i][j]);
-//                }
-//            }
-//        }
-//        this.gameboard = level;
-//        sc.close();
-//    }
+    public static void processTowerFile(String fileName, ArrayList<Integer> IDList, HashMap<Integer, TowerPiece> IDMap) throws FileNotFoundException {
+        File reader = new File(fileName);
+        Scanner sc = new Scanner(reader);
+        int id = 1; //towerPieceID
+        while (sc.hasNextLine()) {
+            String[] data = sc.nextLine().trim().split(", ");
+            TowerPiece tp = new TowerPiece(data[0], Integer.parseInt(data[1]),
+                    Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+            IDMap.put(id, tp); //add to (id, val) map
+            IDList.add(id);
+            id++;
+        }
+        sc.close();
+    }
 
 
 

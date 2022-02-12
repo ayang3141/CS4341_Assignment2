@@ -3,7 +3,7 @@ import java.util.*;
 
 public class NumberGroup {
 
-    private final int prob1InputSize = 8;
+    private final int prob1InputSize = 40;
     private int[] numberIDGroup = new int[prob1InputSize];
 
     private final HashMap<Integer, Double> numberIDHashMap;

@@ -12,8 +12,9 @@ public class Tower {
     private final HashMap<Integer, TowerPiece> towerpieceID_Map;
 
     final int bottomBinEnd = 1;
-    private int middleBinEnd = 20; //TODO: fix this
-    private int topBinEnd = 30; //TODO: fix this (this is 1+middlebinend)
+    // initializing the middlebin to be halfway through the population
+    private int middleBinEnd; //TODO: fix this
+    private int topBinEnd;
     final int unusedBinEnd;
 
     private boolean isValid = false;
@@ -25,6 +26,8 @@ public class Tower {
     public Tower(int[] towerpieceIDGroup, HashMap<Integer, TowerPiece> idMap) {
         this.towerpieceIDGroup = towerpieceIDGroup;
         this.towerpieceID_Map = idMap;
+        this.middleBinEnd = towerpieceIDGroup.length/2;
+        this.topBinEnd = this.middleBinEnd + 1;
         this.unusedBinEnd = towerpieceIDGroup.length-1;
     }
 
@@ -51,6 +54,10 @@ public class Tower {
     public void setTowerPieceIdGroup(int[] group){
         this.towerpieceIDGroup = group;
         this.updateScore();
+    }
+
+    public HashMap<Integer, TowerPiece> getTowerpieceID_Map() {
+        return this.towerpieceID_Map;
     }
 
     // method for calculating score

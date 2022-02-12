@@ -159,11 +159,65 @@ public class Genetics {
         return new Tower[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
     }
 
-    // TODO: Tower Problem cross-over method
     public Tower[] towerCrossOver(Tower parent1, Tower parent2) {
+        int[] firstParentGenes = parent1.getTowerpieceIDGroup();
+        int[] secondParentGenes = parent2.getTowerpieceIDGroup();
+        int size = firstParentGenes.length;
 
+        int[] firstChildGenes = new int[size];
+        int[] secondChildGenes = new int[size];
 
-        return null;
+        // --------- Determine Swath section ----------------
+        Random random = new Random();
+        int number1 =  random.nextInt(size);
+        int number2 =  random.nextInt(size);
+        int firstSlice = Math.min(number1, number2);
+        int secondSlice = Math.max(number1, number2);
+
+//        System.out.println(firstSlice);
+//        System.out.println(secondSlice);
+
+        // Keep track of values already in each child
+        List<Integer> VisitedSoFar1 = new ArrayList<Integer>();
+        List<Integer> VisitedSoFar2 = new ArrayList<Integer>();
+
+        /*  copy down swath section from parent 1 to child 1
+            copy down swath section from parent 2 to child 2
+         */
+        for(int i = firstSlice; i < secondSlice; i++) {
+            firstChildGenes[i] = firstParentGenes[i];
+            VisitedSoFar1.add(firstParentGenes[i]);
+
+            secondChildGenes[i] = secondParentGenes[i];
+            VisitedSoFar2.add(secondParentGenes[i]);
+        }
+//        System.out.println(Arrays.toString(firstChildGenes));
+//        System.out.println(Arrays.toString(secondChildGenes));
+
+        // Ordered Crossover
+        int currentFirstIndex = secondSlice;
+        int currentSecondIndex = secondSlice;
+        for(int i = 0; i < size; i++) {
+            int currentFirstGene = secondParentGenes[(secondSlice + i) % size];
+            int currentSecondGene = firstParentGenes[(secondSlice + i) % size];
+
+            if(!(VisitedSoFar1.contains(currentFirstGene))) {
+                firstChildGenes[currentFirstIndex] = currentFirstGene;
+                VisitedSoFar1.add(currentFirstGene);
+//                System.out.println(Arrays.toString(firstChildGenes));
+                currentFirstIndex = (currentFirstIndex + 1) % size;
+            }
+
+            if(!(VisitedSoFar2.contains(currentSecondGene))) {
+                secondChildGenes[currentSecondIndex] = currentSecondGene;
+                VisitedSoFar2.add(currentSecondGene);
+//                System.out.println(Arrays.toString(secondChildGenes));
+                currentSecondIndex = (currentSecondIndex + 1) % size;
+            }
+        }
+
+        return new Tower[] {new Tower(firstChildGenes, parent1.getTowerpieceID_Map()),
+                new Tower(secondChildGenes,  parent2.getTowerpieceID_Map())};
     }
 
     // TODO: Tower Problem mutation method
