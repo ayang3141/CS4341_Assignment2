@@ -3,18 +3,29 @@ import java.util.*;
 
 public class NumberGroup {
 
-    private int[] numberIDGroup = new int[40];
-    HashMap<Integer, Double> numberIDHashMap;
+    private final int prob1InputSize = 8;
+    private int[] numberIDGroup = new int[prob1InputSize];
+
+    private final HashMap<Integer, Double> numberIDHashMap;
 
     private double score = 0;
-    final int size = 40;
+    final int size = prob1InputSize;
 
-    final int productBinEnd = 10;
-    final int sumBinEnd = 20;
-    final int rangeBinEnd = 30;
     final int productBinStart = 0;
-    final int sumBinStart = 10;
-    final int rangeBinStart = 20;
+    final int productBinEnd = prob1InputSize/4;
+    final int sumBinEnd = 2*prob1InputSize/4;
+    final int rangeBinEnd = 3*prob1InputSize/4;
+    final int sumBinStart = prob1InputSize/4;
+    final int rangeBinStart = 2*prob1InputSize/4;
+
+    public NumberGroup(int[] numberIDGroup, HashMap<Integer, Double> map) {
+        this.numberIDGroup = numberIDGroup;
+        this.numberIDHashMap = map;
+    }
+
+    public HashMap<Integer, Double> getNumberIDHashMap() {
+        return numberIDHashMap;
+    }
 
     public int[] getNumberIDGroup() {
         return numberIDGroup;
@@ -28,11 +39,6 @@ public class NumberGroup {
     public double getScore(){
         return this.score;
     }
-
-    public NumberGroup(int[] numberIDGroup) {
-        this.numberIDGroup = numberIDGroup;
-    }
-
 
     public void calculateScore() {
         this.score = getProduct() + getSum() + getRange();
@@ -70,6 +76,31 @@ public class NumberGroup {
         return product;
     }
 
+    public int[] getProductBinSorted(){
+        int[] arr = Arrays.copyOfRange(this.numberIDGroup, productBinStart, productBinEnd);
+        Arrays.sort(arr);
+        return arr;
+    }
+
+    public int[] getSumBinSorted(){
+        int[] arr = Arrays.copyOfRange(this.numberIDGroup, sumBinStart, sumBinEnd);
+        Arrays.sort(arr);
+        return arr;
+    }
+
+    public int[] getRangeBinSorted(){
+        int[] arr = Arrays.copyOfRange(this.numberIDGroup, rangeBinStart, rangeBinEnd);
+        Arrays.sort(arr);
+        return arr;
+    }
+
+    public String toString(){
+        double[] arr = new double[prob1InputSize];
+        for(int i = 0; i<prob1InputSize; i++){
+            arr[i] = this.numberIDHashMap.get(this.numberIDGroup[i]);
+        }
+        return "[" + Arrays.toString(arr) +"]"+" = " + this.score;
+    }
     public static Comparator<NumberGroup> fitScoreComparator = new Comparator<NumberGroup>() {
 
         public int compare(NumberGroup N1, NumberGroup N2) {

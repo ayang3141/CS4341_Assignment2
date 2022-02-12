@@ -16,7 +16,7 @@ public class Program {
         boolean PROBLEM_2 = !PROBLEM_1;
         String inputFilePath = args[1];
         int maxRunTime = Integer.parseInt(args[2]);
-        final int prob1InputSize = 40;
+        final int prob1InputSize = 8;
 
 
         if(PROBLEM_1) {
@@ -30,7 +30,7 @@ public class Program {
             try {
                 File reader = new File(inputFilePath);
                 Scanner sc = new Scanner(reader);
-                int id = 1; //numberID
+                int id = 0; //numberID
                 while (sc.hasNextLine()) {
                     String data = sc.nextLine();
                     double val = Double.parseDouble(data.trim());
@@ -55,7 +55,7 @@ public class Program {
 
 
             List<NumberGroup> thePopulation = new ArrayList<NumberGroup>(15);
-            thePopulation.add(new NumberGroup(initialIndividualIDs));
+            thePopulation.add(new NumberGroup(initialIndividualIDs, numberID));
 
             // generate the initial population
             while(thePopulation.size() < 10) {
@@ -66,7 +66,7 @@ public class Program {
                 shuffle(newIndividual);
 
                 // add the randomly shuffled individual to the population
-                thePopulation.add(new NumberGroup(newIndividual));
+                thePopulation.add(new NumberGroup(newIndividual, numberID));
             }
 
 
@@ -77,15 +77,17 @@ public class Program {
 
 
             boolean POPULATION_NOT_CONVERGED = true;
-            boolean TIME_RUN_OUT = true;
+            boolean TIME_LEFT = true;
             long startTime = System.nanoTime();
-            while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
-
+            System.out.println("starting algorithm for problem 1");
+            int generationNum = 0;
+            while(POPULATION_NOT_CONVERGED && TIME_LEFT) {
+                generationNum++;
                 // Select the top 2 individuals to be parents
                 NumberGroup[] topTwo = geneticAlgo.numberSelection(thePopulation);
 
                 // generate new children until the population is at least 10
-                while(thePopulation.size() >= 10) {
+                while(thePopulation.size() <= 10) {
                     // Cross-Over: generate 2 new children
                     NumberGroup[] newChildren = geneticAlgo.numberCrossOver(topTwo[0], topTwo[1]);
 
@@ -96,7 +98,6 @@ public class Program {
                     // add new children to population
                     thePopulation.add(newChildren[0]);
                     thePopulation.add(newChildren[1]);
-
                 }
 
                 // Compute fitness for each individual in new population
@@ -112,12 +113,50 @@ public class Program {
                 }
                 thePopulation = newPopulation;
 
+                TIME_LEFT = (System.nanoTime() - startTime)/(1000000000) <= maxRunTime;
 
-                TIME_RUN_OUT = (System.nanoTime() - startTime)/(1000000000) >= maxRunTime;
+
+//                //check if population converged
+//                NumberGroup firstIndividual =  thePopulation.get(0);
+//                boolean foundUnique = false;
+//                for(NumberGroup individual : thePopulation){
+//                    if(!Arrays.equals(firstIndividual.getProductBinSorted(),individual.getProductBinSorted()) ||
+//                            !Arrays.equals(firstIndividual.getSumBinSorted(),individual.getSumBinSorted()) ||
+//                            !Arrays.equals(firstIndividual.getRangeBinSorted(),individual.getRangeBinSorted())){
+//                        foundUnique = true;
+//                    }
+//                }
+//                if(!foundUnique){
+//                    System.out.println("converged after " + generationNum + " generations.");
+//                    POPULATION_NOT_CONVERGED = false;
+//                }
             }
 
+            System.out.println("Final Population: ");
+            for(NumberGroup indiv : thePopulation){
+                System.out.println(indiv.toString());
+            }
+
+            System.out.print("\nResults");
+            thePopulation.sort(NumberGroup.fitScoreComparator);
+            NumberGroup best =  thePopulation.get(0);
+            for(int i = 0; i < prob1InputSize; i++){
+                if(i%(prob1InputSize/4) == 0){
+                    System.out.print("\n");
+                }
+                System.out.print(numberID.get(best.getNumberIDGroup()[i]) + ", ");
+            }
+            System.out.println("\nScore: " + best.getScore());
 
         }
+
+
+
+
+
+
+
+
         else if (PROBLEM_2) { // DO TOWER GENETIC ALGORITHM
             HashMap<Integer, TowerPiece> towerPieceID = new HashMap<>();
             ArrayList<Integer> initialIndividualIDs = new ArrayList<>();
@@ -208,7 +247,6 @@ public class Program {
 
                 TIME_RUN_OUT = (System.nanoTime() - startTime)/(1000000000) >= maxRunTime;
             }
-
         }
     }
 
