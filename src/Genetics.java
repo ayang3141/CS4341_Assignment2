@@ -58,8 +58,6 @@ public class Genetics {
         int firstSlice = Math.min(number1, number2);
         int secondSlice = Math.max(number1, number2);
 
-//        System.out.println(firstSlice);
-//        System.out.println(secondSlice);
 
         // Keep track of values already in each child
         List<Integer> VisitedSoFar1 = new ArrayList<Integer>();
@@ -75,8 +73,6 @@ public class Genetics {
             secondChildGenes[i] = secondParentGenes[i];
             VisitedSoFar2.add(secondParentGenes[i]);
         }
-//        System.out.println(Arrays.toString(firstChildGenes));
-//        System.out.println(Arrays.toString(secondChildGenes));
 
         // Ordered Crossover
         int currentFirstIndex = secondSlice;
@@ -88,14 +84,12 @@ public class Genetics {
             if(!(VisitedSoFar1.contains(currentFirstGene))) {
                 firstChildGenes[currentFirstIndex] = currentFirstGene;
                 VisitedSoFar1.add(currentFirstGene);
-//                System.out.println(Arrays.toString(firstChildGenes));
                 currentFirstIndex = (currentFirstIndex + 1) % size;
             }
 
             if(!(VisitedSoFar2.contains(currentSecondGene))) {
                 secondChildGenes[currentSecondIndex] = currentSecondGene;
                 VisitedSoFar2.add(currentSecondGene);
-//                System.out.println(Arrays.toString(secondChildGenes));
                 currentSecondIndex = (currentSecondIndex + 1) % size;
             }
         }
@@ -159,6 +153,41 @@ public class Genetics {
         return new Tower[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
     }
 
+    public Tower[] towerSelect(List<Tower> population){
+        ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
+        int sum = 0;
+        for(int i = 0; i < population.size(); i++) {
+            int currentScore = population.get(i).getScore();
+            sum += currentScore;
+            fitnessScores.add(sum);
+        }
+
+        // calculate probability using fitness scores
+        Random random = new Random();
+        double roll1 = 100.0 * random.nextDouble();
+        double roll2 = 100.0 * random.nextDouble();
+        int[] topTwo = new int[2];
+        topTwo[0] = -1;
+        topTwo[1] = -1;
+
+
+        for (int i = 0; i < fitnessScores.size() && topTwo[0] != -1; i++) {
+            if(roll1 < (fitnessScores.get(i) * (100/sum))) {
+                topTwo[0] = i;
+            }
+        }
+        sum -= fitnessScores.get(topTwo[0]);
+        fitnessScores.remove(topTwo[0]);
+        for (int i = 0; i < fitnessScores.size() && topTwo[1] != -1; i++) {
+            if(roll2 < (fitnessScores.get(i) * (100/sum))) {
+                topTwo[1] = i;
+            }
+        }
+
+        Tower[] t = {population.get(topTwo[0]), population.get(topTwo[1])};
+        return t;
+    }
+
     public Tower[] towerCrossOver(Tower parent1, Tower parent2) {
         int[] firstParentGenes = parent1.getTowerpieceIDGroup();
         int[] secondParentGenes = parent2.getTowerpieceIDGroup();
@@ -174,8 +203,6 @@ public class Genetics {
         int firstSlice = Math.min(number1, number2);
         int secondSlice = Math.max(number1, number2);
 
-//        System.out.println(firstSlice);
-//        System.out.println(secondSlice);
 
         // Keep track of values already in each child
         List<Integer> VisitedSoFar1 = new ArrayList<Integer>();
@@ -191,8 +218,6 @@ public class Genetics {
             secondChildGenes[i] = secondParentGenes[i];
             VisitedSoFar2.add(secondParentGenes[i]);
         }
-//        System.out.println(Arrays.toString(firstChildGenes));
-//        System.out.println(Arrays.toString(secondChildGenes));
 
         // Ordered Crossover
         int currentFirstIndex = secondSlice;
@@ -204,53 +229,49 @@ public class Genetics {
             if(!(VisitedSoFar1.contains(currentFirstGene))) {
                 firstChildGenes[currentFirstIndex] = currentFirstGene;
                 VisitedSoFar1.add(currentFirstGene);
-//                System.out.println(Arrays.toString(firstChildGenes));
                 currentFirstIndex = (currentFirstIndex + 1) % size;
             }
 
             if(!(VisitedSoFar2.contains(currentSecondGene))) {
                 secondChildGenes[currentSecondIndex] = currentSecondGene;
                 VisitedSoFar2.add(currentSecondGene);
-//                System.out.println(Arrays.toString(secondChildGenes));
                 currentSecondIndex = (currentSecondIndex + 1) % size;
             }
         }
 
-        return new Tower[] {new Tower(firstChildGenes, parent1.getTowerpieceID_Map()),
-                new Tower(secondChildGenes,  parent2.getTowerpieceID_Map())};
+        return new Tower[] {new Tower(firstChildGenes, parent1.getTowerpieceID_Map(), parent1.getMiddleBinEnd()),
+                new Tower(secondChildGenes,  parent2.getTowerpieceID_Map(), parent2.getMiddleBinEnd())};
     }
 
-    // TODO: Tower Problem mutation method
     public void towerMutation(Tower child) {
         Random rand = new Random();
-        int mutationType = rand.nextInt(1)+1;
+        int mutationType = rand.nextInt(3);
         int[] towerPieceIdGroup = child.getTowerpieceIDGroup();
         int towerSize = towerPieceIdGroup.length;
 
-        if(mutationType==1) { // swap
-
-            int pos1 = rand.nextInt(towerSize-1);
-            int pos2 = rand.nextInt(towerSize-1);
-
-            int oldPos1 = child.getTowerpieceIDGroup()[pos1];
-            towerPieceIdGroup[pos1] = towerPieceIdGroup[pos2];
-            towerPieceIdGroup[pos2] = oldPos1;
-
-        } else { //do boundary shift
-            int shift = rand.nextInt(1); //0 left 1 right
+        if(mutationType==0) { //do boundary shift
+            int shift = rand.nextInt(2); //0 left 1 right
             if(child.getTopBinEnd() == child.unusedBinEnd){ //unusedBin is empty
                 shift = 0; //go left
             } else if(child.getMiddleBinEnd() == child.bottomBinEnd) { //middleBin is empty
                 shift = 1; //go right
-            }
+            } // 1 | 2 | 3 | 4
             //TODO: mention assumption of input size >= 4 tower pieces in writeup
             if(shift == 0){
                 child.shift(-1);
-
             } else {
                 child.shift(1);
             }
         }
+
+        //swap
+        int pos1 = rand.nextInt(towerSize-1);
+        int pos2 = rand.nextInt(towerSize-1);
+
+        int oldPos1 = child.getTowerpieceIDGroup()[pos1];
+        towerPieceIdGroup[pos1] = towerPieceIdGroup[pos2];
+        towerPieceIdGroup[pos2] = oldPos1;
+
         child.setTowerPieceIdGroup(towerPieceIdGroup);
     }
 }

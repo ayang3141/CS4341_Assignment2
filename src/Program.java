@@ -154,20 +154,23 @@ public class Program {
 
             // Initialize population list to hold individuals
             // add initial individual into population list
-            List<Tower> thePopulation = new ArrayList<Tower>(15);
-            thePopulation.add(new Tower(initialIndividualID, towerPieceID));
+
+            int populationSize = 20;
+            List<Tower> thePopulation = new ArrayList<Tower>(populationSize);
 
             // TODO: Major issue with passing boundary information to children
             // generate the initial population
-            while(thePopulation.size() < 10) {
+            Random rand = new Random();
+            while(thePopulation.size() < populationSize) {
                 // generate a new clone of the initial individual
                 int[] newIndividual = initialIndividualID.clone();
 
                 // randomly shuffle the new clone
                 shuffle(newIndividual);
+                int midBinEnd = rand.nextInt(towerPieceID.size()-2)+2;
 
                 // add the randomly shuffled individual to the population
-                thePopulation.add(new Tower(newIndividual, towerPieceID));
+                thePopulation.add(new Tower(newIndividual, towerPieceID, midBinEnd));
             }
 
             System.out.println("Generated Initial Population");
@@ -179,19 +182,26 @@ public class Program {
 
 
             boolean POPULATION_NOT_CONVERGED = true;
-            boolean TIME_RUN_OUT = true;
+            boolean TIME_LEFT = true;
             long startTime = System.nanoTime();
             int generationNum = 1;
-            while(POPULATION_NOT_CONVERGED || TIME_RUN_OUT) {
-
-                System.out.println("Generation: " + generationNum);
-
+            Tower bestSoFar = thePopulation.get(0);
+            while(POPULATION_NOT_CONVERGED && TIME_LEFT) {
                 // Select the top 2 individuals to be parents
                 // Select the top 2 individuals to be parents
                 Tower[] topTwo = geneticAlgo.towerSelection(thePopulation);
+                ArrayList<Tower> currentPopulation = new ArrayList<>();
+                currentPopulation.add(topTwo[0]);
+                currentPopulation.add(topTwo[1]);
+
+                //todo delete
+                if(topTwo[0].getScore() > bestSoFar.getScore()){
+                    bestSoFar = topTwo[0];
+                    System.out.println("Found best: \n" + bestSoFar.toString());
+                }
 
                 // generate new children until the population is at least 10
-                while(thePopulation.size() <= 10) {
+                while(currentPopulation.size() <= populationSize) {
                     // Cross-Over: generate 2 new children
                     Tower[] newChildren = geneticAlgo.towerCrossOver(topTwo[0], topTwo[1]);
 
@@ -200,32 +210,44 @@ public class Program {
                     geneticAlgo.towerMutation(newChildren[1]);
 
                     // add new children to population
-                    thePopulation.add(newChildren[0]);
-                    thePopulation.add(newChildren[1]);
-
+                    currentPopulation.add(newChildren[0]);
+                    currentPopulation.add(newChildren[1]);
                 }
 
-                // Compute fitness for each individual in new population
-                for(int i = 0; i < thePopulation.size(); i++) {
-                    thePopulation.get(i).getScore();
-                }
+                thePopulation = currentPopulation;
+                //current pop has 20 members
+
+//                // Compute fitness for each individual in new population
+//                for(int i = 0; i < thePopulation.size(); i++) {
+//                    thePopulation.get(i).getScore();
+//                }
 
 
-                // Only keep the TOP 10 individuals of the population
-                Collections.sort(thePopulation, Tower.fitScoreComparator);
+                // Only keep the TOP 2 individuals of the population
+                Collections.sort(currentPopulation, Tower.fitScoreComparator);
                 List<Tower> newPopulation = new ArrayList<Tower>(15);
-                for(int i = 0; i < 10; i++) {
+                for(int i = 0; i < 2; i++) {
                     newPopulation.add(thePopulation.get(i));
                 }
-                thePopulation = newPopulation;
 
-                TIME_RUN_OUT = (System.nanoTime() - startTime)/(1000000000) >= maxRunTime;
+                TIME_LEFT = (System.nanoTime() - startTime)/(1000000000) <= maxRunTime;
                 generationNum++;
+
             } // end of genetic algorithm loop
 
+            // PRINT OUT FINAL RESULTS
+            System.out.println("Final Population: ");
+            for(Tower indiv : thePopulation){
+                System.out.println(indiv.toString());
+            }
 
+            System.out.println("\nResults");
+            thePopulation.sort(Tower.fitScoreComparator);
+            Tower best =  thePopulation.get(0);
+            System.out.println(best.toString());
+            System.out.println("Score: " + best.getScore());
+            System.out.println("gen: "+ generationNum);
 
-            System.out.println("Tower problem successfully ended");
         } // end of problem 2 if statement
     } // end of Main function
 
