@@ -10,36 +10,82 @@ public class Genetics {
 
 
     // Number Problem selection method
-    public NumberGroup[] numberSelection(List<NumberGroup> population) {
-        // put all fitness scores into a list
-        ArrayList<Double> fitnessScores = new ArrayList<Double>();
+//    public NumberGroup[] numberSelect(List<NumberGroup> population) {
+//        // put all fitness scores into a list
+//        ArrayList<Double> fitnessScores = new ArrayList<Double>();
+//        for(int i = 0; i < population.size(); i++) {
+//            fitnessScores.add(population.get(i).getScore());
+//        }
+//
+//        // find the top 2 individuals in the population
+//        double firstLargest = Double.NEGATIVE_INFINITY;
+//        int firstLargestIndex = -1;
+//        double secondLargest = Double.NEGATIVE_INFINITY;
+//        int secondLargestIndex = -1;
+//
+//        for(int i = 0; i < fitnessScores.size(); i++) {
+//            double currentScore = fitnessScores.get(i);
+//            if(currentScore > firstLargest) {
+//                secondLargest = firstLargest;
+//                secondLargestIndex = firstLargestIndex;
+//                firstLargest = currentScore;
+//                firstLargestIndex = i;
+//
+//            } else if (currentScore > secondLargest) {
+//                secondLargest = currentScore;
+//                secondLargestIndex = i;
+//            }
+//        }
+//
+//        // return the top 2 individuals
+//        return new NumberGroup[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
+//
+//    }
+
+    public NumberGroup[] numberSelection(List<NumberGroup> population){
+        ArrayList<Double> fitnessScores = new ArrayList<>();
+        double sum = 0;
         for(int i = 0; i < population.size(); i++) {
-            fitnessScores.add(population.get(i).getScore());
+            double currentScore = population.get(i).getScore();
+            if(currentScore<0){
+                currentScore = 0;
+            }
+            sum += currentScore;
+            fitnessScores.add(sum);
         }
 
-        // find the top 2 individuals in the population
-        double firstLargest = Double.NEGATIVE_INFINITY;
-        int firstLargestIndex = -1;
-        double secondLargest = Double.NEGATIVE_INFINITY;
-        int secondLargestIndex = -1;
 
-        for(int i = 0; i < fitnessScores.size(); i++) {
-            double currentScore = fitnessScores.get(i);
-            if(currentScore > firstLargest) {
-                secondLargest = firstLargest;
-                secondLargestIndex = firstLargestIndex;
-                firstLargest = currentScore;
-                firstLargestIndex = i;
+        // calculate probability using fitness scores
+        Random random = new Random();
+        double roll1 = 100.0 * random.nextDouble();
+        double roll2 = 100.0 * random.nextDouble();
+        int[] topTwo = new int[2];
+        topTwo[0] = -1;
+        topTwo[1] = -1;
 
-            } else if (currentScore > secondLargest) {
-                secondLargest = currentScore;
-                secondLargestIndex = i;
+        if(sum == 0){
+            NumberGroup[] t = {population.get(0), population.get(1)};
+            return t;
+        }
+        for (int i = 0; i < fitnessScores.size() && topTwo[0] == -1; i++) {
+            if(roll1 <= (fitnessScores.get(i)/sum * 100)) {
+                topTwo[0] = i;
             }
         }
+        sum -= fitnessScores.get(topTwo[0]);
+        fitnessScores.remove(topTwo[0]);
 
-        // return the top 2 individuals
-        return new NumberGroup[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
-
+        if(sum == 0){
+            NumberGroup[] t = {population.get(topTwo[0]), population.get((topTwo[0]+1)%population.size())};
+            return t;
+        }
+        for (int i = 0; i < fitnessScores.size() && topTwo[1] == -1; i++) {
+            if(roll2 < (fitnessScores.get(i) * (100/sum))) {
+                topTwo[1] = i;
+            }
+        }
+        NumberGroup[] t = {population.get(topTwo[0]), population.get(topTwo[1])};
+        return t;
     }
 
     // Number Problem cross-over method
@@ -121,39 +167,41 @@ public class Genetics {
     }
 
 
+    //do not use this (actual top 2 100% of time)
+//    public Tower[] towerSelect(List<Tower> population) {
+//        // put all fitness scores into a list
+//        ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
+//        for(int i = 0; i < population.size(); i++) {
+//            fitnessScores.add(population.get(i).getScore());
+//        }
+//
+//        // find the top 2 individuals in the population
+//        int firstLargest = Integer.MIN_VALUE;
+//        int firstLargestIndex = -1;
+//        int secondLargest = Integer.MIN_VALUE;
+//        int secondLargestIndex = -1;
+//
+//        for(int i = 0; i < fitnessScores.size(); i++) {
+//            int currentScore = fitnessScores.get(i);
+//            if(currentScore > firstLargest) {
+//                secondLargest = firstLargest;
+//                secondLargestIndex = firstLargestIndex;
+//                firstLargest = currentScore;
+//                firstLargestIndex = i;
+//
+//            } else if (currentScore > secondLargest) {
+//                secondLargest = currentScore;
+//                secondLargestIndex = i;
+//            }
+//        }
+//
+//        // return the top 2 individuals
+//        return new Tower[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
+//    }
+
+
     // Tower Problem selection method
-    public Tower[] towerSelection(List<Tower> population) {
-        // put all fitness scores into a list
-        ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
-        for(int i = 0; i < population.size(); i++) {
-            fitnessScores.add(population.get(i).getScore());
-        }
-
-        // find the top 2 individuals in the population
-        int firstLargest = Integer.MIN_VALUE;
-        int firstLargestIndex = -1;
-        int secondLargest = Integer.MIN_VALUE;
-        int secondLargestIndex = -1;
-
-        for(int i = 0; i < fitnessScores.size(); i++) {
-            int currentScore = fitnessScores.get(i);
-            if(currentScore > firstLargest) {
-                secondLargest = firstLargest;
-                secondLargestIndex = firstLargestIndex;
-                firstLargest = currentScore;
-                firstLargestIndex = i;
-
-            } else if (currentScore > secondLargest) {
-                secondLargest = currentScore;
-                secondLargestIndex = i;
-            }
-        }
-
-        // return the top 2 individuals
-        return new Tower[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
-    }
-
-    public Tower[] towerSelect(List<Tower> population){
+    public Tower[] towerSelection(List<Tower> population){
         ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
         int sum = 0;
         for(int i = 0; i < population.size(); i++) {
@@ -171,14 +219,24 @@ public class Genetics {
         topTwo[1] = -1;
 
 
-        for (int i = 0; i < fitnessScores.size() && topTwo[0] != -1; i++) {
-            if(roll1 < (fitnessScores.get(i) * (100/sum))) {
+        if(sum == 0){
+            Tower[] t = {population.get(0), population.get(1)};
+            return t;
+        }
+        for (int i = 0; i < fitnessScores.size() && topTwo[0] == -1; i++) {
+            if(roll1 <= (fitnessScores.get(i)/sum * 100)) {
                 topTwo[0] = i;
             }
         }
         sum -= fitnessScores.get(topTwo[0]);
         fitnessScores.remove(topTwo[0]);
-        for (int i = 0; i < fitnessScores.size() && topTwo[1] != -1; i++) {
+
+        if(sum == 0){
+            Tower[] t = {population.get(topTwo[0]), population.get((topTwo[0]+1)%population.size())};
+            return t;
+        }
+
+        for (int i = 0; i < fitnessScores.size() && topTwo[1] == -1; i++) {
             if(roll2 < (fitnessScores.get(i) * (100/sum))) {
                 topTwo[1] = i;
             }

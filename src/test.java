@@ -17,12 +17,23 @@ public class test {
 
         // convert towerpiece list into array
         int[] initialIndividualID = {5,4,1,3,2};
+        int[] initialIndividualID1 = {5,1,4,3,2};
+        int[] initialIndividualID2 = {5,4,2,3,1};
         System.out.println(Arrays.toString(initialIndividualID));
 
         Tower t = new Tower(initialIndividualID, towerPieceID, 3);
-        System.out.println(t.isValid());
-        System.out.println(t.getIdList());
-        System.out.println(t.getScore());
+        Tower t1 = new Tower(initialIndividualID1, towerPieceID, 3);
+        Tower t2 = new Tower(initialIndividualID2, towerPieceID, 3);
+
+        Genetics g = new Genetics();
+        ArrayList<Tower> towers = new ArrayList<>();
+        towers.add(t);
+        towers.add(t1);
+        towers.add(t2);
+
+        for(Tower asofiawj : g.towerSelection(towers)){
+            System.out.println(asofiawj);
+        };
     }
 
     public static void processTowerFile(String fileName, ArrayList<Integer> IDList, HashMap<Integer, TowerPiece> IDMap) throws FileNotFoundException {
