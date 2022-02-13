@@ -245,7 +245,7 @@ public class Genetics {
 
     public void towerMutation(Tower child) {
         Random rand = new Random();
-        int mutationType = rand.nextInt(3);
+        int mutationType = rand.nextInt(2);
         int[] towerPieceIdGroup = child.getTowerpieceIDGroup();
         int towerSize = towerPieceIdGroup.length;
 

@@ -4,10 +4,6 @@ import java.util.HashMap;
 
 public class Tower {
 
-    public int[] getTowerpieceIDGroup() {
-        return towerpieceIDGroup;
-    }
-
     private int[] towerpieceIDGroup;
     private final HashMap<Integer, TowerPiece> towerpieceID_Map;
 
@@ -29,13 +25,17 @@ public class Tower {
         this.middleBinEnd = midBinEnd;
         this.unusedBinEnd = towerpieceIDGroup.length;
         this.topBinEnd = this.middleBinEnd + 1;
-        this.isValidTower();
         this.updateScore();
     }
 
     public boolean isValid(){
         return this.isValid;
     }
+
+    public int[] getTowerpieceIDGroup() {
+        return towerpieceIDGroup;
+    }
+
     public int getScore() {
         return this.score;
     }
@@ -140,16 +140,27 @@ public class Tower {
     }
 
 
+    public String getIdList(){
+        String result = "[";
+        for(int i=0; i < this.towerpieceIDGroup.length; i++){
+            result += this.towerpieceIDGroup[i];
+            if(i==this.middleBinEnd-1 || i==this.bottomBinEnd-1 || i==this.topBinEnd-1){
+                result+="|";
+            } else {
+                result+=" ";
+            }
+        }
+        return result+"\b]";
+    }
+
     public String toString(){
         String result = "";
         for(int i = 0; i < this.topBinEnd; i++){
             TowerPiece curr = this.towerpieceID_Map.get(towerpieceIDGroup[i]);
-            result += curr.toString()+"\n";
-            if(i==this.middleBinEnd-1){
-//                result+="--\n";
-                result += curr.toString()+"\n";
-
+            if(i==this.middleBinEnd || i==this.bottomBinEnd || i==this.topBinEnd){
+                result+="|";
             }
+            result += curr.toString()+"\n";
         }
         return result + "Score: " + this.score;
     }
