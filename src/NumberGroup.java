@@ -3,14 +3,12 @@ import java.util.*;
 
 public class NumberGroup {
 
+    // important variables
     private final int prob1InputSize = 40;
     private int[] numberIDGroup = new int[prob1InputSize];
-
     private final HashMap<Integer, Double> numberIDHashMap;
-
     private double score = 0;
     final int size = prob1InputSize;
-
     final int productBinStart = 0;
     final int productBinEnd = prob1InputSize/4;
     final int sumBinEnd = 2*prob1InputSize/4;
@@ -18,33 +16,39 @@ public class NumberGroup {
     final int sumBinStart = prob1InputSize/4;
     final int rangeBinStart = 2*prob1InputSize/4;
 
+    // constructor for NumberGroup class
     public NumberGroup(int[] numberIDGroup, HashMap<Integer, Double> map) {
         this.numberIDGroup = numberIDGroup;
         this.numberIDHashMap = map;
     }
 
+    // retrieve ID-Double hashmap
     public HashMap<Integer, Double> getNumberIDHashMap() {
         return numberIDHashMap;
     }
 
+    // retrieve ID list
     public int[] getNumberIDGroup() {
         return numberIDGroup;
     }
 
+    // set ID list
     public void setNumberIDGroup(int[] numberIDGroup) {
         this.numberIDGroup = numberIDGroup;
         this.calculateScore();
     }
 
+    // get score
     public double getScore(){
         return this.score;
     }
 
+    // calculate score
     public void calculateScore() {
         this.score = getProduct() + getSum() + getRange();
     }
 
-
+    // calculate range
     private double getRange() {
         double max = Double.NEGATIVE_INFINITY;
         double min = Double.POSITIVE_INFINITY;
@@ -60,6 +64,7 @@ public class NumberGroup {
         return max - min;
     }
 
+    // calculate sum
     private double getSum() {
         double sum = 0.0;
         for(int i = sumBinStart; i < sumBinEnd; i++) {
@@ -68,6 +73,7 @@ public class NumberGroup {
         return sum;
     }
 
+    // calculate product
     private double getProduct() {
         double product = 1.0;
         for(int i = productBinStart; i < productBinEnd; i++) {

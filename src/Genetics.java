@@ -9,45 +9,47 @@ public class Genetics {
     }
 
 
-    // Number Problem selection method
-//    public NumberGroup[] numberSelect(List<NumberGroup> population) {
-//        // put all fitness scores into a list
-//        ArrayList<Double> fitnessScores = new ArrayList<Double>();
-//        for(int i = 0; i < population.size(); i++) {
-//            fitnessScores.add(population.get(i).getScore());
-//        }
-//
-//        // find the top 2 individuals in the population
-//        double firstLargest = Double.NEGATIVE_INFINITY;
-//        int firstLargestIndex = -1;
-//        double secondLargest = Double.NEGATIVE_INFINITY;
-//        int secondLargestIndex = -1;
-//
-//        for(int i = 0; i < fitnessScores.size(); i++) {
-//            double currentScore = fitnessScores.get(i);
-//            if(currentScore > firstLargest) {
-//                secondLargest = firstLargest;
-//                secondLargestIndex = firstLargestIndex;
-//                firstLargest = currentScore;
-//                firstLargestIndex = i;
-//
-//            } else if (currentScore > secondLargest) {
-//                secondLargest = currentScore;
-//                secondLargestIndex = i;
-//            }
-//        }
-//
-//        // return the top 2 individuals
-//        return new NumberGroup[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
-//
-//    }
+    // Number Problem selection top 2 method
+    public NumberGroup[] numberSelectTop2(List<NumberGroup> population) {
+        // put all fitness scores into a list
+        ArrayList<Double> fitnessScores = new ArrayList<Double>();
+        for(int i = 0; i < population.size(); i++) {
+            fitnessScores.add(population.get(i).getScore());
+        }
 
-    public NumberGroup[] numberSelection(List<NumberGroup> population){
+        // find the top 2 individuals in the population
+        double firstLargest = Double.NEGATIVE_INFINITY;
+        int firstLargestIndex = -1;
+        double secondLargest = Double.NEGATIVE_INFINITY;
+        int secondLargestIndex = -1;
+
+        for(int i = 0; i < fitnessScores.size(); i++) {
+            double currentScore = fitnessScores.get(i);
+            if(currentScore > firstLargest) {
+                secondLargest = firstLargest;
+                secondLargestIndex = firstLargestIndex;
+                firstLargest = currentScore;
+                firstLargestIndex = i;
+
+            } else if (currentScore > secondLargest) {
+                secondLargest = currentScore;
+                secondLargestIndex = i;
+            }
+        }
+
+        // return the top 2 individuals
+        return new NumberGroup[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
+
+    }
+
+    // Number Problem Roulette selection method
+    public NumberGroup[] numberRouletteSelection(List<NumberGroup> population) {
+        // generate array of cumulative sums
         ArrayList<Double> fitnessScores = new ArrayList<>();
         double sum = 0;
         for(int i = 0; i < population.size(); i++) {
             double currentScore = population.get(i).getScore();
-            if(currentScore<0){
+            if(currentScore < 0){
                 currentScore = 0;
             }
             sum += currentScore;
@@ -63,29 +65,34 @@ public class Genetics {
         topTwo[0] = -1;
         topTwo[1] = -1;
 
+        // if no towers are valid, just pick first two
         if(sum == 0){
-            NumberGroup[] t = {population.get(0), population.get(1)};
-            return t;
+            return new NumberGroup[]{population.get(0), population.get(1)};
         }
+
+        // Roulette wheel selection for first number
         for (int i = 0; i < fitnessScores.size() && topTwo[0] == -1; i++) {
             if(roll1 <= (fitnessScores.get(i)/sum * 100)) {
                 topTwo[0] = i;
             }
         }
+
+        // remove first number from available options
         sum -= fitnessScores.get(topTwo[0]);
         fitnessScores.remove(topTwo[0]);
 
+        // if no towers are valid, pick first number and next number
         if(sum == 0){
-            NumberGroup[] t = {population.get(topTwo[0]), population.get((topTwo[0]+1)%population.size())};
-            return t;
+            return new NumberGroup[]{population.get(topTwo[0]), population.get((topTwo[0] + 1) % population.size())};
         }
+
+        // Roulette wheel selection for second number
         for (int i = 0; i < fitnessScores.size() && topTwo[1] == -1; i++) {
             if(roll2 < (fitnessScores.get(i) * (100/sum))) {
                 topTwo[1] = i;
             }
         }
-        NumberGroup[] t = {population.get(topTwo[0]), population.get(topTwo[1])};
-        return t;
+        return new NumberGroup[]{population.get(topTwo[0]), population.get(topTwo[1])};
     }
 
     // Number Problem cross-over method
@@ -166,42 +173,40 @@ public class Genetics {
         child.setNumberIDGroup(childGenes);
     }
 
+    // Tower Problem selection top 2 method
+    public Tower[] towerSelectTop2(List<Tower> population) {
+        // put all fitness scores into a list
+        ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
+        for(int i = 0; i < population.size(); i++) {
+            fitnessScores.add(population.get(i).getScore());
+        }
 
-    //do not use this (actual top 2 100% of time)
-//    public Tower[] towerSelect(List<Tower> population) {
-//        // put all fitness scores into a list
-//        ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
-//        for(int i = 0; i < population.size(); i++) {
-//            fitnessScores.add(population.get(i).getScore());
-//        }
-//
-//        // find the top 2 individuals in the population
-//        int firstLargest = Integer.MIN_VALUE;
-//        int firstLargestIndex = -1;
-//        int secondLargest = Integer.MIN_VALUE;
-//        int secondLargestIndex = -1;
-//
-//        for(int i = 0; i < fitnessScores.size(); i++) {
-//            int currentScore = fitnessScores.get(i);
-//            if(currentScore > firstLargest) {
-//                secondLargest = firstLargest;
-//                secondLargestIndex = firstLargestIndex;
-//                firstLargest = currentScore;
-//                firstLargestIndex = i;
-//
-//            } else if (currentScore > secondLargest) {
-//                secondLargest = currentScore;
-//                secondLargestIndex = i;
-//            }
-//        }
-//
-//        // return the top 2 individuals
-//        return new Tower[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
-//    }
+        // find the top 2 individuals in the population
+        int firstLargest = Integer.MIN_VALUE;
+        int firstLargestIndex = -1;
+        int secondLargest = Integer.MIN_VALUE;
+        int secondLargestIndex = -1;
 
+        for(int i = 0; i < fitnessScores.size(); i++) {
+            int currentScore = fitnessScores.get(i);
+            if(currentScore > firstLargest) {
+                secondLargest = firstLargest;
+                secondLargestIndex = firstLargestIndex;
+                firstLargest = currentScore;
+                firstLargestIndex = i;
+
+            } else if (currentScore > secondLargest) {
+                secondLargest = currentScore;
+                secondLargestIndex = i;
+            }
+        }
+
+        // return the top 2 individuals
+        return new Tower[] {population.get(firstLargestIndex),population.get(secondLargestIndex)};
+    }
 
     // Tower Problem selection method
-    public Tower[] towerSelection(List<Tower> population){
+    public Tower[] towerRouletteSelection(List<Tower> population){
         ArrayList<Integer> fitnessScores = new ArrayList<Integer>();
         int sum = 0;
         for(int i = 0; i < population.size(); i++) {
@@ -218,32 +223,35 @@ public class Genetics {
         topTwo[0] = -1;
         topTwo[1] = -1;
 
-
+        // if no towers are valid, just pick first two
         if(sum == 0){
-            Tower[] t = {population.get(0), population.get(1)};
-            return t;
+            return new Tower[]{population.get(0), population.get(1)};
         }
+
+        // Roulette wheel selection for first number
         for (int i = 0; i < fitnessScores.size() && topTwo[0] == -1; i++) {
             if(roll1 <= (fitnessScores.get(i)/sum * 100)) {
                 topTwo[0] = i;
             }
         }
+
+        // remove first number from available options
         sum -= fitnessScores.get(topTwo[0]);
         fitnessScores.remove(topTwo[0]);
 
+        // if no towers are valid, pick first number and next number
         if(sum == 0){
-            Tower[] t = {population.get(topTwo[0]), population.get((topTwo[0]+1)%population.size())};
-            return t;
+            return new Tower[]{population.get(topTwo[0]), population.get((topTwo[0] + 1) % population.size())};
         }
 
+        // Roulette wheel selection for second number
         for (int i = 0; i < fitnessScores.size() && topTwo[1] == -1; i++) {
             if(roll2 < (fitnessScores.get(i) * (100/sum))) {
                 topTwo[1] = i;
             }
         }
 
-        Tower[] t = {population.get(topTwo[0]), population.get(topTwo[1])};
-        return t;
+        return new Tower[]{population.get(topTwo[0]), population.get(topTwo[1])};
     }
 
     public Tower[] towerCrossOver(Tower parent1, Tower parent2) {
@@ -307,22 +315,29 @@ public class Genetics {
         int[] towerPieceIdGroup = child.getTowerpieceIDGroup();
         int towerSize = towerPieceIdGroup.length;
 
-        if(mutationType==0) { //do boundary shift
-            int shift = rand.nextInt(2); //0 left 1 right
-            if(child.getTopBinEnd() == child.unusedBinEnd){ //unusedBin is empty
-                shift = 0; //go left
-            } else if(child.getMiddleBinEnd() == child.bottomBinEnd) { //middleBin is empty
-                shift = 1; //go right
-            } // 1 | 2 | 3 | 4
+        if(mutationType == 0) { // do boundary shift
+            // shift direction: 0 = left; 1 = right
+            int shift = rand.nextInt(2);
+
+            // Check boundary cases
+            if(child.getTopBinEnd() == child.unusedBinEnd) { // unusedBin is empty
+                shift = 0; // go left
+            }
+            else if(child.getMiddleBinEnd() == child.bottomBinEnd) { // middleBin is empty
+                shift = 1; // go right
+            }
+
             //TODO: mention assumption of input size >= 4 tower pieces in writeup
-            if(shift == 0){
+            // Do respective shift
+            if(shift == 0) {
                 child.shift(-1);
-            } else {
+            }
+            else {
                 child.shift(1);
             }
         }
 
-        //swap
+        // swapping
         int pos1 = rand.nextInt(towerSize-1);
         int pos2 = rand.nextInt(towerSize-1);
 
