@@ -1,7 +1,7 @@
 public class TowerPiece {
     // This class handles the Tower Pieces
 
-    String pieceType;
+    final String pieceType;
     private final int width;
     private final int strength;
     private final int cost;
@@ -33,7 +33,8 @@ public class TowerPiece {
         return this.cost;
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "(" + pieceType + ", " + width + ", " + strength + ", " + cost + ")";
+    }
 }

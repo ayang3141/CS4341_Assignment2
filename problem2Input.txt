@@ -1,0 +1,4 @@
+Lookout, 1, 3, 5
+Wall, 1, 3, 2
+Door, 5, 8, 4
+Wall, 3, 4, 2
