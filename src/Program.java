@@ -241,6 +241,7 @@ public class Program {
 
             // PRINT OUT FINAL RESULTS
             System.out.println("Final Population: ");
+            currentPopulation.get(0).isValidTower();
             for(Tower indiv : currentPopulation){
                 System.out.println(indiv.toString());
             }

@@ -2,4 +2,4 @@ Wall, 2, 3, 3
 Door, 2, 2, 2
 Lookout, 1, 1, 4
 Wall, 4, 3, 3
-Door, 6, 2, 1
+Door, 6, 3, 1

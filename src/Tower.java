@@ -16,7 +16,6 @@ public class Tower {
     private int topBinEnd;
     final int unusedBinEnd;
 
-    private boolean isValid = false;
 
     private int height;
     private int cost;
@@ -29,13 +28,9 @@ public class Tower {
         this.middleBinEnd = midBinEnd;
         this.unusedBinEnd = towerpieceIDGroup.length;
         this.topBinEnd = this.middleBinEnd + 1;
-        this.isValidTower();
         this.updateScore();
     }
 
-    public boolean isValid(){
-        return this.isValid;
-    }
     public int getScore() {
         return this.score;
     }
@@ -68,8 +63,7 @@ public class Tower {
 
     // method for calculating score
     private void updateScore() {// do not use this, use getScore() instead
-        this.isValidTower();
-        if(this.isValid) {
+        if(this.isValidTower()) {
             updateHeight();
             updateCost();
             this.score = 10 + (int)Math.pow(this.height, 2.0) - this.cost;
@@ -79,36 +73,32 @@ public class Tower {
     }
 
     //try not to use this
-    private void isValidTower() {
+    public boolean isValidTower() {
         //Rules 1, 2, and 3
         if(!isValidBottom() || !isValidTop() || !isValidMiddle()){
-            this.isValid = false;
-            return;
+            return false;
         }
 
         //Rule 4: A piece in a tower can, at most, be as wide as the piece below it.
         //Rule 5: A piece in a tower can only support towerPiece.strength pieces above it.
         TowerPiece tp =  towerpieceID_Map.get(towerpieceIDGroup[0]);
         if(tp.getStrength() < this.height-1){ //check if door can support tower
-            this.isValid = false;
-            return;
+            return false;
         }
         int prevWidth = tp.getWidth();
         int currWidth;
         for(int i=1; i<topBinEnd; i++){ //width must descend
             TowerPiece t = towerpieceID_Map.get(towerpieceIDGroup[i]);
             if(t.getStrength() < this.height-(i+1)){ //rule 5
-                this.isValid = false;
-                return;
+                return false;
             }
             currWidth = t.getWidth();
             if(prevWidth < currWidth){ //rule 4
-                this.isValid = false;
-                return;
+                return false;
             }
             prevWidth = currWidth;
         }
-        this.isValid = true;
+        return true;
     }
 
     private void updateHeight() { //assumes valid tower
@@ -136,7 +126,7 @@ public class Tower {
     }
 
     public boolean isValidTop() {
-        return towerpieceID_Map.get(this.towerpieceIDGroup[topBinEnd-1]).getPieceType().equals("Lookout");
+        return towerpieceID_Map.get(this.towerpieceIDGroup[this.topBinEnd-1]).getPieceType().equals("Lookout");
     }
 
 
@@ -147,7 +137,7 @@ public class Tower {
             result += curr.toString()+"\n";
             if(i==this.middleBinEnd-1){
 //                result+="--\n";
-                result += curr.toString()+"\n";
+//                result += curr.toString()+"\n";
 
             }
         }
