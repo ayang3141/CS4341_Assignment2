@@ -97,12 +97,12 @@ public class Tower {
         int currWidth;
         for(int i=1; i<topBinEnd; i++){ //width must descend
             TowerPiece t = towerpieceID_Map.get(towerpieceIDGroup[i]);
-            if(t.getStrength() <= this.height-(i+1)){ //rule 5
+            if(t.getStrength() < this.height-(i+1)){ //rule 5
                 this.isValid = false;
                 return;
             }
             currWidth = t.getWidth();
-            if(prevWidth <= currWidth){ //rule 4
+            if(prevWidth < currWidth){ //rule 4
                 this.isValid = false;
                 return;
             }
@@ -128,7 +128,7 @@ public class Tower {
     }
 
     public boolean isValidMiddle() {
-        for(int i=1; i<this.middleBinEnd; i++) {
+        for(int i=bottomBinEnd; i<this.middleBinEnd; i++) {
             if (!towerpieceID_Map.get(this.towerpieceIDGroup[i]).getPieceType().equals("Wall"))
                 return false;
         }
@@ -146,7 +146,9 @@ public class Tower {
             TowerPiece curr = this.towerpieceID_Map.get(towerpieceIDGroup[i]);
             result += curr.toString()+"\n";
             if(i==this.middleBinEnd-1){
-                result+="--\n";
+//                result+="--\n";
+                result += curr.toString()+"\n";
+
             }
         }
         return result + "Score: " + this.score;
