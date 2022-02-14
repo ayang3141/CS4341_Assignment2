@@ -61,7 +61,6 @@ public class Program {
             boolean POPULATION_NOT_CONVERGED = true;
             boolean TIME_LEFT = true;   // if thee is still time left
             long startTime = System.nanoTime();
-            System.out.println("starting algorithm for problem 1");
             while(POPULATION_NOT_CONVERGED && TIME_LEFT) {
                 // Select the top 2 individuals to be parents
                 NumberGroup[] topTwo = geneticAlgo.numberRouletteSelection(thePopulation);
@@ -98,13 +97,6 @@ public class Program {
 
             } // end of genetic algorithm loop
 
-            // PRINT OUT FINAL RESULTS
-//            System.out.println("Final Population: ");
-//            for(NumberGroup indiv : thePopulation){
-//                System.out.println(indiv.getNumberIDGroup());
-//            }
-
-            System.out.println("\nResults");
             thePopulation.sort(NumberGroup.fitScoreComparator);
             NumberGroup best =  thePopulation.get(0);
             for(int i = 0; i < prob1InputSize; i++){
@@ -156,7 +148,6 @@ public class Program {
                 currentPopulation.add(new Tower(newIndividual, towerPieceID, midBinEnd));
             }
 
-            System.out.println("Generated Initial Population");
 
             // Compute fitness score for each individual in population
             for(int i = 0; i < currentPopulation.size(); i++) {
@@ -202,19 +193,9 @@ public class Program {
                 TIME_LEFT = (System.nanoTime() - startTime)/(1000000000) <= maxRunTime;
             } // end of genetic algorithm loop
 
-            // PRINT OUT FINAL RESULTS
-            System.out.println("Final Population: ");
-//            currentPopulation.get(0).isValidTower();
-            for(Tower indiv : currentPopulation){
-                System.out.println(indiv.getIdList());
-            }
-
-            System.out.println("\nResults");
             currentPopulation.sort(Tower.fitScoreComparator);
             Tower best =  currentPopulation.get(0);
-            System.out.println(best.getIdList());
-            System.out.println("Score: " + best.getScore());
-            System.out.println("gen: "+ generationNum);
+            System.out.println(best.toString());
 
         } // end of problem 2 if statement
     } // end of Main function

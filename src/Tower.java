@@ -157,9 +157,6 @@ public class Tower {
         String result = "";
         for(int i = 0; i < this.topBinEnd; i++){
             TowerPiece curr = this.towerpieceID_Map.get(towerpieceIDGroup[i]);
-            if(i==this.middleBinEnd || i==this.bottomBinEnd || i==this.topBinEnd){
-                result+="|";
-            }
             result += curr.toString()+"\n";
         }
         return result + "Score: " + this.score;
